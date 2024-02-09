@@ -1,1 +1,10 @@
 include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    prefer_relative_imports: true
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
