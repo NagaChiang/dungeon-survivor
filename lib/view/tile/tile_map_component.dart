@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
@@ -24,26 +22,38 @@ class TileMapComponent extends PositionComponent {
     ..strokeWidth = 1;
 
   @override
-  Future<void> onLoad() async {
-    super.onLoad();
-
-    final tile = TileComponent(xIndex: 10, yIndex: 10);
-    final text = TextComponent(
-      text: '@',
-      textRenderer: TextPaint(
-        style: AppText.h6.copyWith(color: AppColor.white87),
-      ),
-    )..anchor = Anchor.center;
-
-    tile.add(text);
-    add(tile);
-  }
-
-  @override
   void render(Canvas canvas) {
     super.render(canvas);
 
     _renderGridLines(canvas);
+  }
+
+  PositionComponent addTile(
+    int xIndex,
+    int yIndex,
+    PositionComponent component,
+  ) {
+    final tile = TileComponent(xIndex: xIndex, yIndex: yIndex);
+    component.anchor = Anchor.center;
+    tile.add(component);
+    add(tile);
+
+    return tile;
+  }
+
+  PositionComponent addTextTile(
+    int xIndex,
+    int yIndex,
+    String str,
+  ) {
+    final text = TextComponent(
+      text: str,
+      textRenderer: TextPaint(
+        style: AppText.h6.copyWith(color: AppColor.white87),
+      ),
+    );
+
+    return addTile(xIndex, yIndex, text);
   }
 
   void _renderGridLines(Canvas canvas) {

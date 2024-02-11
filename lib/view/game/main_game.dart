@@ -15,6 +15,10 @@ class MainGame extends FlameGame {
       tileSideLength: 32,
     );
 
+    final text = tileMap.addTextTile(10, 10, '@');
+
     add(tileMap);
+
+    camera.follow(text);
   }
 }
