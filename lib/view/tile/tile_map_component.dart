@@ -1,8 +1,11 @@
-import 'dart:ui';
+import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flutter/painting.dart';
 
 import '../../app/app_color.dart';
+import '../../app/app_text.dart';
+import 'tile_component.dart';
 
 class TileMapComponent extends PositionComponent {
   TileMapComponent({
@@ -19,6 +22,22 @@ class TileMapComponent extends PositionComponent {
     ..color = AppColor.white38
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1;
+
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+
+    final tile = TileComponent(xIndex: 10, yIndex: 10);
+    final text = TextComponent(
+      text: '@',
+      textRenderer: TextPaint(
+        style: AppText.h6.copyWith(color: AppColor.white87),
+      ),
+    )..anchor = Anchor.center;
+
+    tile.add(text);
+    add(tile);
+  }
 
   @override
   void render(Canvas canvas) {
