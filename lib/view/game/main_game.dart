@@ -1,24 +1,35 @@
 import 'dart:async';
 
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 
 import '../tile/tile_map_component.dart';
 
 class MainGame extends FlameGame {
-  @override
-  Future<void> onLoad() async {
-    super.onLoad();
-
+  MainGame()
+      : super(
+          camera: CameraComponent.withFixedResolution(
+            width: 32 * 10,
+            height: 32 * 16,
+          ),
+        ) {
     final tileMap = TileMapComponent(
       widthTileCount: 100,
       heightTileCount: 100,
       tileSideLength: 32,
     );
 
-    final text = tileMap.addTextTile(10, 10, '@');
+    tile = tileMap.addTextTile(10, 10, '@');
 
-    add(tileMap);
+    world.add(tileMap);
+  }
 
-    camera.follow(text);
+  late PositionComponent tile;
+
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+
+    camera.follow(tile);
   }
 }
