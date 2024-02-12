@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../../app/app_color.dart';
+import '../../service/game/input_direction.dart';
 import '../common/button.dart';
 
+typedef InputDirectionCallback = void Function(InputDirection direction);
+
 class ButtonPanel extends StatelessWidget {
-  const ButtonPanel({super.key});
+  const ButtonPanel({
+    super.key,
+    required this.onTap,
+  });
+
+  final InputDirectionCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +32,7 @@ class ButtonPanel extends StatelessWidget {
                     color: _buttonColor,
                   ),
                   onTapUp: () {
-                    // TODO
+                    onTap(InputDirection.up);
                   },
                 ),
                 const SizedBox(width: _buttonSize + _paddingSize),
@@ -41,7 +49,7 @@ class ButtonPanel extends StatelessWidget {
                     color: _buttonColor,
                   ),
                   onTapUp: () {
-                    // TODO
+                    onTap(InputDirection.left);
                   },
                 ),
                 const SizedBox(width: _paddingSize),
@@ -53,7 +61,7 @@ class ButtonPanel extends StatelessWidget {
                     color: _buttonColor,
                   ),
                   onTapUp: () {
-                    // TODO
+                    onTap(InputDirection.stop);
                   },
                 ),
                 const SizedBox(width: _paddingSize),
@@ -65,7 +73,7 @@ class ButtonPanel extends StatelessWidget {
                     color: _buttonColor,
                   ),
                   onTapUp: () {
-                    // TODO
+                    onTap(InputDirection.right);
                   },
                 ),
               ],
@@ -82,7 +90,7 @@ class ButtonPanel extends StatelessWidget {
                     color: _buttonColor,
                   ),
                   onTapUp: () {
-                    // TODO
+                    onTap(InputDirection.down);
                   },
                 ),
                 const SizedBox(width: _buttonSize + _paddingSize),

@@ -3,17 +3,22 @@ import 'package:flutter/widgets.dart';
 import 'button_panel.dart';
 
 class HudLayout extends StatelessWidget {
-  const HudLayout({super.key});
+  const HudLayout({
+    super.key,
+    required this.onInputDirection,
+  });
+
+  final InputDirectionCallback onInputDirection;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ButtonPanel(),
+            ButtonPanel(onTap: onInputDirection),
           ],
         ),
       ],

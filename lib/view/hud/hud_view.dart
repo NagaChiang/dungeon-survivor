@@ -11,7 +11,13 @@ class HudView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => HudViewModel.create(context),
-      child: const HudLayout(),
+      builder: (context, _) {
+        final vm = context.read<HudViewModel>();
+
+        return HudLayout(
+          onInputDirection: vm.onInputDirection,
+        );
+      },
     );
   }
 
