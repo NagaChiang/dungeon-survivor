@@ -2,7 +2,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import '../view/game/main_game.dart';
-import '../view/game/game_screen.dart';
+import '../view/hud/hud_view.dart';
 import 'app_theme.dart';
 
 class App extends StatelessWidget {
@@ -14,13 +14,14 @@ class App extends StatelessWidget {
       title: 'Dungeon Survivor',
       debugShowCheckedModeBanner: false,
       theme: appTheme,
-      home: const Material(
-        child: Stack(
-          children: [
-            GameWidget.controlled(gameFactory: MainGame.new),
-            GameScreen(),
-          ],
-        ),
+      home: GameWidget.controlled(
+        gameFactory: MainGame.new,
+        overlayBuilderMap: {
+          HudView.overlayName: (_, __) => const HudView(),
+        },
+        initialActiveOverlays: const [
+          HudView.overlayName,
+        ],
       ),
     );
   }

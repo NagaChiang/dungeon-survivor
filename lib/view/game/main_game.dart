@@ -16,7 +16,7 @@ class MainGame extends FlameGame {
     final tileMap = TileMapComponent(
       widthTileCount: 100,
       heightTileCount: 100,
-      tileSideLength: 32,
+      tileSize: 32,
     );
 
     tile = tileMap.addTextTile(10, 10, '@');

@@ -22,8 +22,8 @@ class TileComponent extends PositionComponent
   }
 
   void _updatePosition() {
-    final tileSideLength = ancestor.tileSideLength;
-    x = (xIndex + 0.5) * tileSideLength.toDouble();
-    y = (yIndex + 0.5) * tileSideLength.toDouble();
+    final tileSize = ancestor.tileSize;
+    x = (xIndex + 0.5) * tileSize.toDouble();
+    y = (yIndex + 0.5) * tileSize.toDouble();
   }
 }

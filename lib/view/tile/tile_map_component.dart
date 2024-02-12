@@ -9,12 +9,12 @@ class TileMapComponent extends PositionComponent {
   TileMapComponent({
     required this.widthTileCount,
     required this.heightTileCount,
-    required this.tileSideLength,
+    required this.tileSize,
   });
 
   final int widthTileCount;
   final int heightTileCount;
-  final int tileSideLength;
+  final int tileSize;
 
   final _gridLinePaint = Paint()
     ..color = AppColor.white38
@@ -58,8 +58,8 @@ class TileMapComponent extends PositionComponent {
 
   void _renderGridLines(Canvas canvas) {
     for (var i = 0; i <= widthTileCount; i++) {
-      final x = i * tileSideLength;
-      final y = heightTileCount * tileSideLength;
+      final x = i * tileSize;
+      final y = heightTileCount * tileSize;
       canvas.drawLine(
         Offset(x.toDouble(), 0),
         Offset(x.toDouble(), y.toDouble()),
@@ -68,8 +68,8 @@ class TileMapComponent extends PositionComponent {
     }
 
     for (var i = 0; i <= heightTileCount; i++) {
-      final x = widthTileCount * tileSideLength;
-      final y = i * tileSideLength;
+      final x = widthTileCount * tileSize;
+      final y = i * tileSize;
       canvas.drawLine(
         Offset(0, y.toDouble()),
         Offset(x.toDouble(), y.toDouble()),
