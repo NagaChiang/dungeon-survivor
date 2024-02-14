@@ -104,5 +104,5 @@ class ButtonPanel extends StatelessWidget {
 
   static const _buttonSize = 48.0;
   static const _paddingSize = 8.0;
-  static const _buttonColor = AppColor.white54;
+  static const _buttonColor = AppColor.white87;
 }

@@ -29,11 +29,11 @@ class TileMapComponent extends PositionComponent {
   }
 
   PositionComponent addTile(
-    int xIndex,
-    int yIndex,
+    int posX,
+    int posY,
     PositionComponent component,
   ) {
-    final tile = TileComponent(xIndex: xIndex, yIndex: yIndex);
+    final tile = TileComponent(posX: posX, posY: posY);
     component.anchor = Anchor.center;
     tile.add(component);
     add(tile);
@@ -42,8 +42,8 @@ class TileMapComponent extends PositionComponent {
   }
 
   PositionComponent addTextTile(
-    int xIndex,
-    int yIndex,
+    int posX,
+    int posY,
     String str,
   ) {
     final text = TextComponent(
@@ -53,7 +53,7 @@ class TileMapComponent extends PositionComponent {
       ),
     );
 
-    return addTile(xIndex, yIndex, text);
+    return addTile(posX, posY, text);
   }
 
   void _renderGridLines(Canvas canvas) {

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 
-import '../tile/tile_map_component.dart';
+import '../tile_map/tile_map_component.dart';
 
 class MainGame extends FlameGame {
   MainGame()

@@ -5,14 +5,14 @@ import 'tile_map_component.dart';
 class TileComponent extends PositionComponent
     with HasAncestor<TileMapComponent> {
   TileComponent({
-    required this.xIndex,
-    required this.yIndex,
+    required this.posX,
+    required this.posY,
   }) {
     anchor = Anchor.center;
   }
 
-  int xIndex;
-  int yIndex;
+  int posX;
+  int posY;
 
   @override
   void update(double dt) {
@@ -23,7 +23,7 @@ class TileComponent extends PositionComponent
 
   void _updatePosition() {
     final tileSize = ancestor.tileSize;
-    x = (xIndex + 0.5) * tileSize.toDouble();
-    y = (yIndex + 0.5) * tileSize.toDouble();
+    x = (posX + 0.5) * tileSize.toDouble();
+    y = (posY + 0.5) * tileSize.toDouble();
   }
 }
