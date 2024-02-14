@@ -10,7 +10,7 @@ class HudView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => HudViewModel.create(context),
+      create: HudViewModel.create,
       builder: (context, _) {
         final vm = context.read<HudViewModel>();
 

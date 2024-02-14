@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:provider/provider.dart';
 
 import '../tile_map/tile_map_component.dart';
+import 'game_view_model.dart';
 
 class MainGame extends FlameGame {
   MainGame()
@@ -24,6 +26,8 @@ class MainGame extends FlameGame {
     world.add(tileMap);
   }
 
+  late final GameViewModel viewModel;
+
   late PositionComponent tile;
 
   @override
@@ -31,5 +35,12 @@ class MainGame extends FlameGame {
     super.onLoad();
 
     camera.follow(tile);
+  }
+
+  @override
+  void onAttach() {
+    super.onAttach();
+
+    viewModel = buildContext!.read();
   }
 }
