@@ -8,6 +8,10 @@ class GameRepository {
   final _gameStateSubject = BehaviorSubject<GameState>();
   late final gameStateStream = _gameStateSubject.stream;
 
+  late final tileMapStream = gameStateStream.map(
+    (gameState) => gameState.tileMap,
+  );
+
   void init() {
     // TODO: Load game state from storage first
 

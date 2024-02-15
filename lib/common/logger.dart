@@ -43,7 +43,7 @@ class Logger {
     );
   }
 
-  void verbose(
+  void trace(
     String message, {
     String? tag,
     dynamic error,
