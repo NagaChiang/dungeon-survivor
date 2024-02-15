@@ -16,15 +16,19 @@ class Tile with _$Tile {
 
   @Implements<Health>()
   const factory Tile.player({
+    required int posX,
+    required int posY,
     required int health,
     required int maxHealth,
-  }) = Player;
+  }) = PlayerTile;
 
   @Implements<Health>()
   const factory Tile.enemy({
+    required int posX,
+    required int posY,
     required int health,
     required int maxHealth,
-  }) = Enemy;
+  }) = EnemyTile;
 
   factory Tile.fromJson(Map<String, dynamic> json) => _$TileFromJson(json);
 }
