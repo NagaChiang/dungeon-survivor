@@ -43,8 +43,8 @@ class GameTileComponent extends Component with HasGameRef {
         _tileComp = comp;
       }
 
-      comp.posX = tile.posX;
-      comp.posY = tile.posY;
+      comp.tileX = tile.x;
+      comp.tileY = tile.y;
     }).addTo(_sub);
   }
 }

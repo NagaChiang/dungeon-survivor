@@ -9,8 +9,8 @@ class TileComponent extends PositionComponent
     with HasAncestor<TileMapComponent> {
   TileComponent({
     required this.id,
-    required this.posX,
-    required this.posY,
+    required this.tileX,
+    required this.tileY,
   }) : super(
           anchor: Anchor.center,
         );
@@ -28,8 +28,8 @@ class TileComponent extends PositionComponent
 
     final tileComp = TileComponent(
       id: tile.id,
-      posX: tile.posX,
-      posY: tile.posY,
+      tileX: tile.x,
+      tileY: tile.y,
     );
 
     tileComp.add(textComp);
@@ -38,8 +38,8 @@ class TileComponent extends PositionComponent
   }
 
   final String id;
-  int posX;
-  int posY;
+  int tileX;
+  int tileY;
 
   @override
   void onMount() {
@@ -62,7 +62,7 @@ class TileComponent extends PositionComponent
 
   void _updatePosition() {
     final tileSize = ancestor.tileSize;
-    x = (posX + 0.5) * tileSize.toDouble();
-    y = (posY + 0.5) * tileSize.toDouble();
+    x = (tileX + 0.5) * tileSize.toDouble();
+    y = (tileY + 0.5) * tileSize.toDouble();
   }
 }

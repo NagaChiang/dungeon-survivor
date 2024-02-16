@@ -34,8 +34,8 @@ class GameRepository {
   void createNewGame() {
     final player = Tile.player(
       id: _uuid.v4(),
-      posX: 50,
-      posY: 50,
+      x: 50,
+      y: 50,
       health: 100,
       maxHealth: 100,
     );
