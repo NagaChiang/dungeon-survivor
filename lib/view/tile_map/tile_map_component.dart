@@ -3,7 +3,8 @@ import 'package:flutter/painting.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../app/app_color.dart';
-import '../../common/logger.dart';
+import '../../model/tile_map/tile_map.dart';
+import 'game_tile_component.dart';
 import 'tile_component.dart';
 
 class TileMapComponent extends PositionComponent {
@@ -11,21 +12,32 @@ class TileMapComponent extends PositionComponent {
     required this.widthTileCount,
     required this.heightTileCount,
     required this.tileSize,
-    required this.tileIds,
   });
+
+  factory TileMapComponent.fromTileMap(TileMap tileMap) {
+    final comp = TileMapComponent(
+      widthTileCount: tileMap.widthTileCount,
+      heightTileCount: tileMap.heightTileCount,
+      tileSize: 32,
+    );
+
+    comp.updateTileIdSet(tileMap.tileIdSet);
+
+    return comp;
+  }
 
   final int widthTileCount;
   final int heightTileCount;
   final int tileSize;
-  final List<String> tileIds;
+  final tileIdSet = <String>{};
 
   final _gridLinePaint = Paint()
     ..color = AppColor.white38
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1;
 
-  final _tilesSubject = BehaviorSubject<List<TileComponent>>();
-  late final tilesStream = _tilesSubject.stream;
+  final _tileCompMapSubject = BehaviorSubject<Map<String, TileComponent>>();
+  late final tileCompMapStream = _tileCompMapSubject.stream;
 
   @override
   void render(Canvas canvas) {
@@ -34,20 +46,36 @@ class TileMapComponent extends PositionComponent {
     _renderGridLines(canvas);
   }
 
-  void registerTile(TileComponent tile) {
-    logger.trace('registerTile: $tile', tag: _tag);
-
-    final tiles = _tilesSubject.valueOrNull ?? [];
-    tiles.add(tile);
-    _tilesSubject.add(tiles);
+  void registerTile(TileComponent tileComp) {
+    final tileCompMap = _tileCompMapSubject.valueOrNull ?? {};
+    tileCompMap[tileComp.id] = tileComp;
+    _tileCompMapSubject.add(tileCompMap);
   }
 
   void unregisterTile(TileComponent tile) {
-    logger.trace('unregisterTile: $tile', tag: _tag);
+    final tileCompMap = _tileCompMapSubject.valueOrNull ?? {};
+    tileCompMap.remove(tile.id);
+    _tileCompMapSubject.add(tileCompMap);
+  }
 
-    final tiles = _tilesSubject.valueOrNull ?? [];
-    tiles.remove(tile);
-    _tilesSubject.add(tiles);
+  void updateTileIdSet(Set<String> newIdSet) {
+    final addedTileIds = newIdSet.difference(tileIdSet);
+    for (final id in addedTileIds) {
+      final tileComp = GameTileComponent(tileId: id);
+      add(tileComp);
+    }
+
+    final removedTileIds = tileIdSet.difference(newIdSet);
+    final tileCompMap = _tileCompMapSubject.valueOrNull ?? {};
+    for (final id in removedTileIds) {
+      final tileComp = tileCompMap[id];
+      if (tileComp != null) {
+        remove(tileComp);
+      }
+    }
+
+    tileIdSet.clear();
+    tileIdSet.addAll(newIdSet);
   }
 
   void _renderGridLines(Canvas canvas) {
@@ -71,6 +99,4 @@ class TileMapComponent extends PositionComponent {
       );
     }
   }
-
-  static const _tag = 'TileMapComponent';
 }

@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:provider/provider.dart';
@@ -40,10 +39,8 @@ class MainGame extends FlameGame {
   void _subscribeFollowPlayer() {
     CombineLatestStream.combine2(
       _viewModel.playerTileIdStream,
-      _tileMapComp.tilesStream,
-      (playerTileId, tiles) {
-        return tiles.firstWhereOrNull((tile) => tile.id == playerTileId);
-      },
+      _tileMapComp.tileCompMapStream,
+      (playerTileId, tileCompMap) => tileCompMap[playerTileId],
     ).whereNotNull().listen((playerTile) {
       camera.follow(playerTile);
     }).addTo(_sub);

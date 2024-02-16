@@ -19,7 +19,7 @@ class TileMap with _$TileMap {
   factory TileMap.fromJson(Map<String, dynamic> json) =>
       _$TileMapFromJson(json);
 
-  List<String> get tileIds => tiles.map((tile) => tile.id).toList();
+  Set<String> get tileIdSet => tiles.map((tile) => tile.id).toSet();
 
   Tile? findTile(String id) {
     return tiles.firstWhereOrNull((tile) => tile.id == id);
