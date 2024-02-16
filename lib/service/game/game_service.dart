@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../common/logger.dart';
 import '../../model/game/game_repository.dart';
+import '../../model/tile_map/tile.dart';
 import '../../model/tile_map/tile_map.dart';
 import 'input_direction.dart';
 
@@ -12,6 +13,10 @@ class GameService {
   final GameRepository _gameRepo;
 
   Stream<TileMap> get tileMapStream => _gameRepo.tileMapStream;
+
+  Stream<Tile> getTileStream(String id) {
+    return _gameRepo.getTileStream(id);
+  }
 
   void onInputDirection(InputDirection direction) {
     logger.trace('Input direction: ${direction.name}', tag: _tag);

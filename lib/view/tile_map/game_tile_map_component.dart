@@ -1,30 +1,31 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../game/game_view_model.dart';
 import 'tile_map_component.dart';
 
-class GameTileMapComponent extends PositionComponent {
-  GameTileMapComponent(this._viewModel);
-
-  final GameViewModel _viewModel;
+class GameTileMapComponent extends Component with HasGameRef {
+  late final GameViewModel _viewModel;
 
   TileMapComponent? _tileMapComp;
 
-  final _compositeSub = CompositeSubscription();
+  final _sub = CompositeSubscription();
 
   @override
   Future<void> onLoad() async {
-    await super.onLoad();
+    super.onLoad();
+
+    _viewModel = gameRef.buildContext!.read();
 
     _subscribeTileMap();
   }
 
   @override
   void onRemove() {
-    _compositeSub.clear();
+    _sub.clear();
     super.onRemove();
   }
 
@@ -35,11 +36,14 @@ class GameTileMapComponent extends PositionComponent {
           widthTileCount: tileMap.widthTileCount,
           heightTileCount: tileMap.heightTileCount,
           tileSize: 32,
+          tileIds: tileMap.tileIds,
         );
 
         add(comp);
         _tileMapComp = comp;
+      } else {
+        // TODO: Update tile map component
       }
-    }).addTo(_compositeSub);
+    }).addTo(_sub);
   }
 }

@@ -17,4 +17,6 @@ class TileMap with _$TileMap {
 
   factory TileMap.fromJson(Map<String, dynamic> json) =>
       _$TileMapFromJson(json);
+
+  List<String> get tileIds => tiles.map((tile) => tile.id).toList();
 }

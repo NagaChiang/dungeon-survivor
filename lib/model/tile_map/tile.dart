@@ -10,12 +10,14 @@ class Tile with _$Tile {
   const Tile._();
 
   const factory Tile({
+    required String id,
     required int posX,
     required int posY,
   }) = _Tile;
 
   @Implements<Health>()
   const factory Tile.player({
+    required String id,
     required int posX,
     required int posY,
     required int health,
@@ -24,6 +26,7 @@ class Tile with _$Tile {
 
   @Implements<Health>()
   const factory Tile.enemy({
+    required String id,
     required int posX,
     required int posY,
     required int health,

@@ -29,7 +29,7 @@ class MainGame extends FlameGame {
 
     _viewModel = buildContext!.read();
 
-    final tileMap = GameTileMapComponent(_viewModel);
+    final tileMap = GameTileMapComponent();
     world.add(tileMap);
   }
 }

@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
 import '../../app/app_color.dart';
-import '../../app/app_text.dart';
 import 'tile_component.dart';
 
 class TileMapComponent extends PositionComponent {
@@ -10,16 +11,23 @@ class TileMapComponent extends PositionComponent {
     required this.widthTileCount,
     required this.heightTileCount,
     required this.tileSize,
+    required this.tileIds,
   });
 
   final int widthTileCount;
   final int heightTileCount;
   final int tileSize;
+  final List<String> tileIds;
 
   final _gridLinePaint = Paint()
     ..color = AppColor.white38
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1;
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+  }
 
   @override
   void render(Canvas canvas) {
@@ -39,21 +47,6 @@ class TileMapComponent extends PositionComponent {
     add(tile);
 
     return tile;
-  }
-
-  PositionComponent addTextTile(
-    int posX,
-    int posY,
-    String str,
-  ) {
-    final text = TextComponent(
-      text: str,
-      textRenderer: TextPaint(
-        style: AppText.h6.copyWith(color: AppColor.white87),
-      ),
-    );
-
-    return addTile(posX, posY, text);
   }
 
   void _renderGridLines(Canvas canvas) {
