@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../unit/health.dart';
@@ -13,6 +15,8 @@ class Tile with _$Tile {
     required String id,
     required int x,
     required int y,
+    required String glyph,
+    required int colorValue,
   }) = _Tile;
 
   @Implements<Health>()
@@ -20,6 +24,8 @@ class Tile with _$Tile {
     required String id,
     required int x,
     required int y,
+    required String glyph,
+    required int colorValue,
     required int health,
     required int maxHealth,
   }) = PlayerTile;
@@ -29,9 +35,13 @@ class Tile with _$Tile {
     required String id,
     required int x,
     required int y,
+    required String glyph,
+    required int colorValue,
     required int health,
     required int maxHealth,
   }) = EnemyTile;
 
   factory Tile.fromJson(Map<String, dynamic> json) => _$TileFromJson(json);
+
+  Color get color => Color(colorValue);
 }
