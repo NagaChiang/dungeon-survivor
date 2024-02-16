@@ -1,9 +1,9 @@
-import 'dart:async';
-
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../app/app_color.dart';
+import '../../common/logger.dart';
 import 'tile_component.dart';
 
 class TileMapComponent extends PositionComponent {
@@ -24,10 +24,8 @@ class TileMapComponent extends PositionComponent {
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1;
 
-  @override
-  Future<void> onLoad() async {
-    await super.onLoad();
-  }
+  final _tilesSubject = BehaviorSubject<List<TileComponent>>();
+  late final tilesStream = _tilesSubject.stream;
 
   @override
   void render(Canvas canvas) {
@@ -36,17 +34,20 @@ class TileMapComponent extends PositionComponent {
     _renderGridLines(canvas);
   }
 
-  PositionComponent addTile(
-    int posX,
-    int posY,
-    PositionComponent component,
-  ) {
-    final tile = TileComponent(posX: posX, posY: posY);
-    component.anchor = Anchor.center;
-    tile.add(component);
-    add(tile);
+  void registerTile(TileComponent tile) {
+    logger.trace('registerTile: $tile', tag: _tag);
 
-    return tile;
+    final tiles = _tilesSubject.valueOrNull ?? [];
+    tiles.add(tile);
+    _tilesSubject.add(tiles);
+  }
+
+  void unregisterTile(TileComponent tile) {
+    logger.trace('unregisterTile: $tile', tag: _tag);
+
+    final tiles = _tilesSubject.valueOrNull ?? [];
+    tiles.remove(tile);
+    _tilesSubject.add(tiles);
   }
 
   void _renderGridLines(Canvas canvas) {
@@ -70,4 +71,6 @@ class TileMapComponent extends PositionComponent {
       );
     }
   }
+
+  static const _tag = 'TileMapComponent';
 }

@@ -13,6 +13,8 @@ class GameService {
   final GameRepository _gameRepo;
 
   Stream<TileMap> get tileMapStream => _gameRepo.tileMapStream;
+  Stream<PlayerTile> get playerTileStream => _gameRepo.playerTileStream;
+  Stream<String> get playerTileIdStream => _gameRepo.playerTileIdStream;
 
   Stream<Tile> getTileStream(String id) {
     return _gameRepo.getTileStream(id);

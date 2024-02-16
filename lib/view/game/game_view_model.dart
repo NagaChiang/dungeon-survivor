@@ -11,6 +11,8 @@ class GameViewModel {
   final GameService _gameService;
 
   Stream<TileMap> get tileMapStream => _gameService.tileMapStream;
+  Stream<Tile> get playerTileStream => _gameService.playerTileStream;
+  Stream<String> get playerTileIdStream => _gameService.playerTileIdStream;
 
   Stream<Tile> getTileStream(String id) {
     return _gameService.getTileStream(id);

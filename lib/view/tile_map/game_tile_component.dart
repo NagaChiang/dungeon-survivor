@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flame/components.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -21,7 +19,7 @@ class GameTileComponent extends Component with HasGameRef {
   final _sub = CompositeSubscription();
 
   @override
-  Future<void> onLoad() async {
+  void onLoad() {
     super.onLoad();
 
     _viewModel = gameRef.buildContext!.read();
@@ -39,10 +37,7 @@ class GameTileComponent extends Component with HasGameRef {
     _viewModel.getTileStream(tileId).listen((tile) {
       var comp = _tileComp;
       if (comp == null) {
-        comp = TileComponent(
-          posX: tile.posX,
-          posY: tile.posY,
-        );
+        comp = TileComponent.fromTile(tile);
 
         add(comp);
         _tileComp = comp;

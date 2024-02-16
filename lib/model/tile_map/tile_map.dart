@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'tile.dart';
@@ -19,4 +20,12 @@ class TileMap with _$TileMap {
       _$TileMapFromJson(json);
 
   List<String> get tileIds => tiles.map((tile) => tile.id).toList();
+
+  Tile? findTile(String id) {
+    return tiles.firstWhereOrNull((tile) => tile.id == id);
+  }
+
+  PlayerTile? findPlayerTile() {
+    return tiles.firstWhereOrNull((tile) => tile is PlayerTile) as PlayerTile?;
+  }
 }

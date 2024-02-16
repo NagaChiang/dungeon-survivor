@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
@@ -12,6 +11,16 @@ class GameRepository {
 
   late final tileMapStream = gameStateStream.map(
     (gameState) => gameState.tileMap,
+  );
+
+  late final playerTileStream = tileMapStream
+      .map(
+        (tileMap) => tileMap.findPlayerTile(),
+      )
+      .whereNotNull();
+
+  late final playerTileIdStream = playerTileStream.map(
+    (playerTile) => playerTile.id,
   );
 
   final _uuid = const Uuid();
@@ -45,9 +54,7 @@ class GameRepository {
   Stream<Tile> getTileStream(String id) {
     return tileMapStream
         .map(
-          (tileMap) => tileMap.tiles.firstWhereOrNull(
-            (tile) => tile.id == id,
-          ),
+          (tileMap) => tileMap.findTile(id),
         )
         .whereNotNull();
   }
