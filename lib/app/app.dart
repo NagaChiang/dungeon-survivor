@@ -20,7 +20,7 @@ class App extends StatelessWidget {
       theme: appTheme,
       home: MultiProvider(
         providers: [
-          Provider(create: (_) => GameRepository()..init()),
+          Provider(create: (_) => GameRepository()),
         ],
         child: MultiProvider(
           providers: [
