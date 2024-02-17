@@ -24,7 +24,7 @@ class GameTileComponent extends Component with HasGameRef {
 
     _viewModel = gameRef.buildContext!.read();
 
-    _subscribeTilePosition();
+    _subscribeTile();
   }
 
   @override
@@ -33,7 +33,7 @@ class GameTileComponent extends Component with HasGameRef {
     super.onRemove();
   }
 
-  void _subscribeTilePosition() {
+  void _subscribeTile() {
     _viewModel.getTileStream(tileId).listen((tile) {
       var comp = _tileComp;
       if (comp == null) {

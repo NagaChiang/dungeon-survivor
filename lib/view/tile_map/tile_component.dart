@@ -15,8 +15,6 @@ class TileComponent extends PositionComponent
         );
 
   factory TileComponent.fromTile(Tile tile) {
-    // TODO: Tile decides its appearance
-
     final textComp = TextComponent(
       text: tile.glyph,
       textRenderer: TextPaint(
