@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../service/game/direction.dart';
 import 'tile.dart';
 
 part 'tile_map.freezed.dart';
@@ -59,5 +60,43 @@ class TileMap with _$TileMap {
     ).toList();
 
     return copyWith(tiles: newTiles);
+  }
+
+  Direction getValidDirectionToPlayer(Tile tile) {
+    final playerTile = this.playerTile;
+    if (playerTile == null) {
+      return Direction.stop;
+    }
+
+    return getValidDirectionTo(tile, playerTile);
+  }
+
+  Direction getValidDirectionTo(Tile fromTile, Tile toTile) {
+    final dx = toTile.x - fromTile.x;
+    final dy = toTile.y - fromTile.y;
+
+    if (dx == 0 && dy == 0) {
+      return Direction.stop;
+    }
+
+    final xDir = Direction.fromXY(dx, 0);
+    final xTileX = fromTile.x + xDir.dx;
+    final xTileY = fromTile.y + xDir.dy;
+    final xIsBlocking = isBlockingAt(xTileX, xTileY);
+
+    final yDir = Direction.fromXY(0, dy);
+    final yTileX = fromTile.x + yDir.dx;
+    final yTileY = fromTile.y + yDir.dy;
+    final yIsBlocking = isBlockingAt(yTileX, yTileY);
+
+    if (dx.abs() > dy.abs() && !xIsBlocking) {
+      return xDir;
+    }
+
+    if (!yIsBlocking) {
+      return yDir;
+    }
+
+    return Direction.stop;
   }
 }

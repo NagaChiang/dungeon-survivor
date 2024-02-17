@@ -15,11 +15,20 @@ class GameRepository {
       .map(
         (tileMap) => tileMap.playerTile,
       )
-      .whereNotNull();
+      .whereNotNull()
+      .distinct();
 
-  late final playerTileIdStream = playerTileStream.map(
-    (playerTile) => playerTile.id,
-  );
+  late final playerTileIdStream = playerTileStream
+      .map(
+        (playerTile) => playerTile.id,
+      )
+      .distinct();
+
+  late final actionTileIdStream = gameStateStream
+      .map(
+        (gameState) => gameState.actionTileId,
+      )
+      .distinct();
 
   GameState? get gameState => _gameStateSubject.valueOrNull;
 

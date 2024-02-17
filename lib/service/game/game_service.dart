@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app/app_color.dart';
@@ -13,6 +14,7 @@ import 'direction.dart';
 class GameService {
   GameService(this._gameRepo) {
     _createNewGame();
+    _subscribeActionTileId();
   }
 
   final GameRepository _gameRepo;
@@ -21,26 +23,42 @@ class GameService {
   Stream<PlayerTile> get playerTileStream => _gameRepo.playerTileStream;
   Stream<String> get playerTileIdStream => _gameRepo.playerTileIdStream;
 
+  final _sub = CompositeSubscription();
   final _uuid = const Uuid();
+
+  void dispose() {
+    _sub.clear();
+  }
 
   Stream<Tile> getTileStream(String id) {
     return _gameRepo.getTileStream(id);
   }
 
   void onInputDirection(Direction direction) {
-    logger.trace('Input direction: ${direction.name}', tag: _tag);
-
-    if (direction == Direction.stop) {
+    final gameState = _gameRepo.gameState;
+    if (gameState == null) {
+      logger.warning('Game state not found', tag: _tag);
       return;
     }
 
-    final playerTile = _gameRepo.gameState?.playerTile;
+    if (!gameState.isPlayerAction) {
+      logger.trace('Not player action', tag: _tag);
+      return;
+    }
+
+    if (direction == Direction.stop) {
+      _endAction();
+      return;
+    }
+
+    final playerTile = gameState.playerTile;
     if (playerTile == null) {
       logger.warning('Player tile not found', tag: _tag);
       return;
     }
 
     _moveTile(playerTile, direction);
+    _endAction();
   }
 
   void _moveTile(Tile tile, Direction direction) {
@@ -59,6 +77,66 @@ class GameService {
 
     final newTile = tile.copyWith(x: newX, y: newY);
     final newGameState = oldGameState.copyWithTile(newTile);
+
+    _gameRepo.updateGameState(newGameState);
+  }
+
+  void _subscribeActionTileId() {
+    _gameRepo.actionTileIdStream.listen((actionTileId) {
+      logger.trace('Start action: $actionTileId', tag: _tag);
+
+      if (actionTileId == _gameRepo.gameState?.playerTileId) {
+        return;
+      }
+
+      _startEnemyAction(actionTileId);
+    }).addTo(_sub);
+  }
+
+  void _startEnemyAction(String actionTileId) {
+    final gameState = _gameRepo.gameState;
+    if (gameState == null) {
+      logger.error('Game state not found', tag: _tag);
+      return;
+    }
+
+    final actionTile = gameState.tileMap.findTile(actionTileId);
+    if (actionTile == null) {
+      logger.error('Action tile not found: $actionTileId', tag: _tag);
+      return;
+    }
+
+    final direction = gameState.getValidDirectionToPlayer(actionTile);
+
+    _moveTile(actionTile, direction);
+    _endAction();
+  }
+
+  void _endAction() {
+    final oldGameState = _gameRepo.gameState;
+    if (oldGameState == null) {
+      logger.warning('Game state not found', tag: _tag);
+      return;
+    }
+
+    logger.trace(
+      'End action: ${oldGameState.actionTileId}',
+      tag: _tag,
+    );
+
+    final nextActionTileId = oldGameState.findNextActionTileId();
+    final isNextPlayerAction = nextActionTileId == oldGameState.playerTileId;
+
+    final oldTimeSec = oldGameState.timeSec;
+    final nextTimeSec = isNextPlayerAction ? oldTimeSec + 1 : oldTimeSec;
+    final newGameState = oldGameState.copyWith(
+      timeSec: nextTimeSec,
+      actionTileId: nextActionTileId,
+    );
+
+    if (isNextPlayerAction) {
+      logger.trace('New time: $nextTimeSec', tag: _tag);
+    }
 
     _gameRepo.updateGameState(newGameState);
   }
@@ -95,7 +173,12 @@ class GameService {
       tiles: [player, ...rats],
     );
 
-    final gameState = GameState(tileMap: tileMap);
+    final gameState = GameState(
+      timeSec: 0,
+      actionTileId: player.id,
+      tileMap: tileMap,
+    );
+
     _gameRepo.updateGameState(gameState);
   }
 

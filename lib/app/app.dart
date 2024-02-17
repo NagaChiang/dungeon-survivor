@@ -24,7 +24,10 @@ class App extends StatelessWidget {
         ],
         child: MultiProvider(
           providers: [
-            Provider(create: GameService.create),
+            Provider(
+              create: GameService.create,
+              dispose: (_, service) => service.dispose(),
+            ),
           ],
           child: MultiProvider(
             providers: [
