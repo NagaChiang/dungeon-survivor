@@ -21,6 +21,8 @@ class GameRepository {
     (playerTile) => playerTile.id,
   );
 
+  GameState? get gameState => _gameStateSubject.valueOrNull;
+
   void updateGameState(GameState gameState) {
     _gameStateSubject.add(gameState);
   }

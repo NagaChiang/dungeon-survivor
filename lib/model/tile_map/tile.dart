@@ -17,6 +17,7 @@ class Tile with _$Tile {
     required int y,
     required String glyph,
     required int colorValue,
+    required bool isBlocking,
   }) = _Tile;
 
   @Implements<Health>()
@@ -26,6 +27,7 @@ class Tile with _$Tile {
     required int y,
     required String glyph,
     required int colorValue,
+    required bool isBlocking,
     required int health,
     required int maxHealth,
   }) = PlayerTile;
@@ -37,6 +39,7 @@ class Tile with _$Tile {
     required int y,
     required String glyph,
     required int colorValue,
+    required bool isBlocking,
     required int health,
     required int maxHealth,
   }) = EnemyTile;

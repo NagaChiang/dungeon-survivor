@@ -28,4 +28,22 @@ class TileMap with _$TileMap {
   PlayerTile? findPlayerTile() {
     return tiles.firstWhereOrNull((tile) => tile is PlayerTile) as PlayerTile?;
   }
+
+  List<Tile> getTilesAt(int x, int y) {
+    return tiles.where((tile) => tile.x == x && tile.y == y).toList();
+  }
+
+  TileMap copyWithTile(Tile tile) {
+    final newTiles = tiles.map(
+      (t) {
+        if (t.id == tile.id) {
+          return tile;
+        }
+
+        return t;
+      },
+    ).toList();
+
+    return copyWith(tiles: newTiles);
+  }
 }
