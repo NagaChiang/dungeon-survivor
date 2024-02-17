@@ -9,6 +9,7 @@ import '../../model/game/game_repository.dart';
 import '../../model/game/game_state.dart';
 import '../../model/tile_map/tile.dart';
 import '../../model/tile_map/tile_map.dart';
+import '../../model/unit/movable.dart';
 import 'direction.dart';
 
 class GameService {
@@ -46,19 +47,39 @@ class GameService {
       return;
     }
 
-    if (direction == Direction.stop) {
-      _endAction();
-      return;
-    }
-
     final playerTile = gameState.playerTile;
     if (playerTile == null) {
       logger.warning('Player tile not found', tag: _tag);
       return;
     }
 
+    if (!_canMove(playerTile)) {
+      _endAction();
+      return;
+    }
+
+    if (direction == Direction.stop) {
+      _endAction();
+      return;
+    }
+
     _moveTile(playerTile, direction);
     _endAction();
+  }
+
+  bool _canMove(Tile tile) {
+    final gameState = _gameRepo.gameState;
+    if (gameState == null) {
+      logger.warning('Game state not found', tag: _tag);
+      return false;
+    }
+
+    final movable = tile as Movable?;
+    if (movable == null) {
+      return false;
+    }
+
+    return movable.moveCooldown <= 0;
   }
 
   void _moveTile(Tile tile, Direction direction) {
@@ -106,6 +127,11 @@ class GameService {
       return;
     }
 
+    if (!_canMove(actionTile)) {
+      _endAction();
+      return;
+    }
+
     final direction = gameState.getValidDirectionToPlayer(actionTile);
 
     _moveTile(actionTile, direction);
@@ -124,15 +150,42 @@ class GameService {
       tag: _tag,
     );
 
+    final oldTile = oldGameState.findTile(oldGameState.actionTileId);
+    final oldMovable = oldTile as Movable?;
+
+    Tile? newTile;
+    if (oldMovable != null) {
+      var cooldown = oldMovable.moveCooldown;
+      if (cooldown <= 0) {
+        cooldown = oldMovable.maxMoveCooldown;
+      }
+
+      cooldown -= 1;
+      switch (oldTile) {
+        case (PlayerTile _):
+          newTile = oldTile.copyWith(moveCooldown: cooldown);
+          break;
+        case (EnemyTile _):
+          newTile = oldTile.copyWith(moveCooldown: cooldown);
+          break;
+        default:
+          break;
+      }
+    }
+
     final nextActionTileId = oldGameState.findNextActionTileId();
     final isNextPlayerAction = nextActionTileId == oldGameState.playerTileId;
 
     final oldTimeSec = oldGameState.timeSec;
     final nextTimeSec = isNextPlayerAction ? oldTimeSec + 1 : oldTimeSec;
-    final newGameState = oldGameState.copyWith(
+    var newGameState = oldGameState.copyWith(
       timeSec: nextTimeSec,
       actionTileId: nextActionTileId,
     );
+
+    if (newTile != null) {
+      newGameState = newGameState.copyWithTile(newTile);
+    }
 
     if (isNextPlayerAction) {
       logger.trace('New time: $nextTimeSec', tag: _tag);
@@ -151,20 +204,26 @@ class GameService {
       isBlocking: true,
       health: 100,
       maxHealth: 100,
+      moveCooldown: 0,
+      maxMoveCooldown: 1,
     );
 
     final rats = List.generate(
       10,
-      (index) => Tile.enemy(
-        id: _uuid.v4(),
-        x: 50 + index + 1,
-        y: 50 + index + 1,
-        glyph: 'r',
-        colorValue: Colors.orangeAccent.value,
-        isBlocking: true,
-        health: 10,
-        maxHealth: 10,
-      ),
+      (index) {
+        return Tile.enemy(
+          id: _uuid.v4(),
+          x: 50 + index + 1,
+          y: 50 + index + 1,
+          glyph: 'r',
+          colorValue: Colors.orangeAccent.value,
+          isBlocking: true,
+          health: 10,
+          maxHealth: 10,
+          moveCooldown: 0,
+          maxMoveCooldown: 2,
+        );
+      },
     );
 
     final tileMap = TileMap(

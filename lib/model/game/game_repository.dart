@@ -41,6 +41,7 @@ class GameRepository {
         .map(
           (tileMap) => tileMap.findTile(id),
         )
-        .whereNotNull();
+        .whereNotNull()
+        .distinct();
   }
 }

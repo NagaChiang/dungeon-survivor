@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../unit/health.dart';
+import '../unit/movable.dart';
 
 part 'tile.freezed.dart';
 part 'tile.g.dart';
@@ -21,6 +22,7 @@ class Tile with _$Tile {
   }) = _Tile;
 
   @Implements<Health>()
+  @Implements<Movable>()
   const factory Tile.player({
     required String id,
     required int x,
@@ -30,9 +32,12 @@ class Tile with _$Tile {
     required bool isBlocking,
     required int health,
     required int maxHealth,
+    required int moveCooldown,
+    required int maxMoveCooldown,
   }) = PlayerTile;
 
   @Implements<Health>()
+  @Implements<Movable>()
   const factory Tile.enemy({
     required String id,
     required int x,
@@ -42,6 +47,8 @@ class Tile with _$Tile {
     required bool isBlocking,
     required int health,
     required int maxHealth,
+    required int moveCooldown,
+    required int maxMoveCooldown,
   }) = EnemyTile;
 
   factory Tile.fromJson(Map<String, dynamic> json) => _$TileFromJson(json);

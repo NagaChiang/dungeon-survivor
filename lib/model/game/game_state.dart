@@ -25,6 +25,7 @@ class GameState with _$GameState {
   // Proxy methods
   PlayerTile? get playerTile => tileMap.playerTile;
   String? get playerTileId => tileMap.playerTileId;
+  Tile? findTile(String id) => tileMap.findTile(id);
   List<Tile> getTilesAt(int x, int y) => tileMap.getTilesAt(x, y);
   bool isBlockingAt(int x, int y) => tileMap.isBlockingAt(x, y);
 
