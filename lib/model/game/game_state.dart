@@ -19,6 +19,7 @@ class GameState with _$GameState {
 
   PlayerTile? findPlayerTile() => tileMap.findPlayerTile();
   List<Tile> getTilesAt(int x, int y) => tileMap.getTilesAt(x, y);
+  bool isBlockingAt(int x, int y) => tileMap.isBlockingAt(x, y);
 
   GameState copyWithTile(Tile tile) {
     final newTileMap = tileMap.copyWithTile(tile);

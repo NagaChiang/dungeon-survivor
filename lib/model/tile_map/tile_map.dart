@@ -33,6 +33,18 @@ class TileMap with _$TileMap {
     return tiles.where((tile) => tile.x == x && tile.y == y).toList();
   }
 
+  bool isBlockingAt(int x, int y) {
+    if (!isValidPosition(x, y)) {
+      return true;
+    }
+
+    return getTilesAt(x, y).any((tile) => tile.isBlocking);
+  }
+
+  bool isValidPosition(int x, int y) {
+    return x >= 0 && x < widthTileCount && y >= 0 && y < heightTileCount;
+  }
+
   TileMap copyWithTile(Tile tile) {
     final newTiles = tiles.map(
       (t) {

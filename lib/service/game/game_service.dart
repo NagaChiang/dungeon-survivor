@@ -52,8 +52,7 @@ class GameService {
 
     final newX = tile.x + direction.dx;
     final newY = tile.y + direction.dy;
-    final oldTiles = oldGameState.getTilesAt(newX, newY);
-    final isBlocking = oldTiles.any((tile) => tile.isBlocking);
+    final isBlocking = oldGameState.isBlockingAt(newX, newY);
     if (isBlocking) {
       return;
     }
