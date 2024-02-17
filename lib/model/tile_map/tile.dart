@@ -54,4 +54,15 @@ class Tile with _$Tile {
   factory Tile.fromJson(Map<String, dynamic> json) => _$TileFromJson(json);
 
   Color get color => Color(colorValue);
+
+  Tile copyWithMoveCooldown(int cooldown) {
+    switch (runtimeType) {
+      case PlayerTile:
+        return (this as PlayerTile).copyWith(moveCooldown: cooldown);
+      case EnemyTile:
+        return (this as EnemyTile).copyWith(moveCooldown: cooldown);
+      default:
+        return this;
+    }
+  }
 }

@@ -176,10 +176,10 @@ class GameService {
     final nextActionTileId = oldGameState.findNextActionTileId();
     final isNextPlayerAction = nextActionTileId == oldGameState.playerTileId;
 
-    final oldTimeSec = oldGameState.timeSec;
-    final nextTimeSec = isNextPlayerAction ? oldTimeSec + 1 : oldTimeSec;
+    final oldTimeSec = oldGameState.turnCount;
+    final nextTurnCount = isNextPlayerAction ? oldTimeSec + 1 : oldTimeSec;
     var newGameState = oldGameState.copyWith(
-      timeSec: nextTimeSec,
+      turnCount: nextTurnCount,
       actionTileId: nextActionTileId,
     );
 
@@ -188,7 +188,37 @@ class GameService {
     }
 
     if (isNextPlayerAction) {
-      logger.trace('New time: $nextTimeSec', tag: _tag);
+      logger.trace('New turn: $nextTurnCount', tag: _tag);
+      _endTurn();
+    }
+
+    _gameRepo.updateGameState(newGameState);
+  }
+
+  void _endTurn() {
+    final gameState = _gameRepo.gameState;
+    if (gameState == null) {
+      logger.warning('Game state not found', tag: _tag);
+      return;
+    }
+
+    var newGameState = gameState.copyWith();
+    final tiles = gameState.tileMap.tiles;
+    for (final tile in tiles) {
+      final movable = tile as Movable?;
+      if (movable == null) {
+        continue;
+      }
+
+      var cooldown = movable.moveCooldown;
+      if (cooldown <= 0) {
+        cooldown = movable.maxMoveCooldown;
+      }
+
+      cooldown -= 1;
+
+      final newTile = tile.copyWithMoveCooldown(cooldown);
+      newGameState = newGameState.copyWithTile(newTile);
     }
 
     _gameRepo.updateGameState(newGameState);
@@ -233,7 +263,7 @@ class GameService {
     );
 
     final gameState = GameState(
-      timeSec: 0,
+      turnCount: 0,
       actionTileId: player.id,
       tileMap: tileMap,
     );

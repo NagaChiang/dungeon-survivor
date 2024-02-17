@@ -12,7 +12,7 @@ class GameState with _$GameState {
   const GameState._();
 
   const factory GameState({
-    required int timeSec,
+    required int turnCount,
     required String actionTileId,
     required TileMap tileMap,
   }) = _GameState;
