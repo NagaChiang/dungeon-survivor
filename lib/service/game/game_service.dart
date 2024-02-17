@@ -34,7 +34,7 @@ class GameService {
       return;
     }
 
-    final playerTile = _gameRepo.gameState?.findPlayerTile();
+    final playerTile = _gameRepo.gameState?.playerTile;
     if (playerTile == null) {
       logger.warning('Player tile not found', tag: _tag);
       return;

@@ -13,7 +13,7 @@ class GameRepository {
 
   late final playerTileStream = tileMapStream
       .map(
-        (tileMap) => tileMap.findPlayerTile(),
+        (tileMap) => tileMap.playerTile,
       )
       .whereNotNull();
 

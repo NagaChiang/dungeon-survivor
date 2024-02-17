@@ -21,12 +21,14 @@ class TileMap with _$TileMap {
 
   Set<String> get tileIdSet => tiles.map((tile) => tile.id).toSet();
 
-  Tile? findTile(String id) {
-    return tiles.firstWhereOrNull((tile) => tile.id == id);
+  PlayerTile? get playerTile {
+    return tiles.firstWhereOrNull((tile) => tile is PlayerTile) as PlayerTile?;
   }
 
-  PlayerTile? findPlayerTile() {
-    return tiles.firstWhereOrNull((tile) => tile is PlayerTile) as PlayerTile?;
+  String? get playerTileId => playerTile?.id;
+
+  Tile? findTile(String id) {
+    return tiles.firstWhereOrNull((tile) => tile.id == id);
   }
 
   List<Tile> getTilesAt(int x, int y) {

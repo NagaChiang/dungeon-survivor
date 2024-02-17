@@ -17,7 +17,8 @@ class GameState with _$GameState {
   factory GameState.fromJson(Map<String, dynamic> json) =>
       _$GameStateFromJson(json);
 
-  PlayerTile? findPlayerTile() => tileMap.findPlayerTile();
+  PlayerTile? get playerTile => tileMap.playerTile;
+  String? get playerTileId => tileMap.playerTileId;
   List<Tile> getTilesAt(int x, int y) => tileMap.getTilesAt(x, y);
   bool isBlockingAt(int x, int y) => tileMap.isBlockingAt(x, y);
 
