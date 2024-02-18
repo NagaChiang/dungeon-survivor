@@ -42,7 +42,7 @@ class MainGame extends FlameGame {
       _tileMapComp.tileCompMapStream,
       (playerTileId, tileCompMap) => tileCompMap[playerTileId],
     ).whereNotNull().listen((playerTile) {
-      camera.follow(playerTile, maxSpeed: 100, snap: true);
+      camera.follow(playerTile, snap: true);
     }).addTo(_sub);
   }
 }

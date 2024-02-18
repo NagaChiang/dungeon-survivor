@@ -46,6 +46,13 @@ class TileMapComponent extends PositionComponent {
     _renderGridLines(canvas);
   }
 
+  Vector2 getTilePosition(int x, int y) {
+    return Vector2(
+      (x + 0.5) * tileSize.toDouble(),
+      (y + 0.5) * tileSize.toDouble(),
+    );
+  }
+
   void registerTile(TileComponent tileComp) {
     final tileCompMap = _tileCompMapSubject.valueOrNull ?? {};
     tileCompMap[tileComp.id] = tileComp;

@@ -63,11 +63,7 @@ class GameService {
     }
 
     _moveTile(playerTile, direction);
-
-    // Delayed for camera following
-    Future.delayed(const Duration(milliseconds: 80), () {
-      _endAction();
-    });
+    _endAction();
   }
 
   bool _canMove(Tile tile) {

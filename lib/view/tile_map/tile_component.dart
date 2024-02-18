@@ -41,6 +41,10 @@ class TileComponent extends PositionComponent
   @override
   void onMount() {
     super.onMount();
+
+    final targetPos = ancestor.getTilePosition(tileX, tileY);
+    position.setFrom(targetPos);
+
     ancestor.registerTile(this);
   }
 
@@ -53,13 +57,13 @@ class TileComponent extends PositionComponent
   @override
   void update(double dt) {
     super.update(dt);
-
-    _updatePosition();
+    _updatePosition(dt);
   }
 
-  void _updatePosition() {
-    final tileSize = ancestor.tileSize;
-    x = (tileX + 0.5) * tileSize.toDouble();
-    y = (tileY + 0.5) * tileSize.toDouble();
+  void _updatePosition(double dt) {
+    final targetPos = ancestor.getTilePosition(tileX, tileY);
+    position.lerp(targetPos, dt * _moveSpeed);
   }
+
+  static const _moveSpeed = 20.0;
 }
