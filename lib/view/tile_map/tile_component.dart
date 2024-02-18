@@ -63,7 +63,8 @@ class TileComponent extends PositionComponent
 
   void _updatePosition(double dt) {
     final targetPos = ancestor.getTilePosition(tileX, tileY);
-    position.lerp(targetPos, dt * _moveSpeed);
+    final t = (dt * _moveSpeed).clamp(0.0, 1.0);
+    position.lerp(targetPos, t);
   }
 
   static const _moveSpeed = 20.0;
