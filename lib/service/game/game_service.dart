@@ -63,7 +63,11 @@ class GameService {
     }
 
     _moveTile(playerTile, direction);
-    _endAction();
+
+    // Delayed for camera following
+    Future.delayed(const Duration(milliseconds: 80), () {
+      _endAction();
+    });
   }
 
   bool _canMove(Tile tile) {
@@ -186,12 +190,12 @@ class GameService {
       newGameState = newGameState.copyWithTile(newTile);
     }
 
+    _gameRepo.updateGameState(newGameState);
+
     if (isNextPlayerAction) {
       logger.trace('New turn: $nextTurnCount', tag: _tag);
       _endTurn();
     }
-
-    _gameRepo.updateGameState(newGameState);
   }
 
   void _endTurn() {
@@ -202,6 +206,7 @@ class GameService {
     }
 
     var newGameState = gameState.copyWithUpdatedMoveCooldown();
+    newGameState = newGameState.copyWithSpawnedEnemy();
     _gameRepo.updateGameState(newGameState);
   }
 
@@ -212,21 +217,10 @@ class GameService {
       50,
     );
 
-    final rats = List.generate(
-      10,
-      (index) {
-        return Tile.createEnemy(
-          _uuid.v4(),
-          50 + index + 1,
-          50 + index + 1,
-        );
-      },
-    );
-
     final tileMap = TileMap(
       widthTileCount: 100,
       heightTileCount: 100,
-      tiles: [player, ...rats],
+      tiles: [player],
     );
 
     final gameState = GameState(

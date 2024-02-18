@@ -21,12 +21,12 @@ class TileMap with _$TileMap {
       _$TileMapFromJson(json);
 
   Set<String> get tileIdSet => tiles.map((tile) => tile.id).toSet();
+  String? get playerTileId => playerTile?.id;
+  int get tileCount => tiles.length;
 
   PlayerTile? get playerTile {
     return tiles.firstWhereOrNull((tile) => tile is PlayerTile) as PlayerTile?;
   }
-
-  String? get playerTileId => playerTile?.id;
 
   Tile? findTile(String id) {
     return tiles.firstWhereOrNull((tile) => tile.id == id);
@@ -49,15 +49,21 @@ class TileMap with _$TileMap {
   }
 
   TileMap copyWithTile(Tile tile) {
+    var isUpdated = false;
     final newTiles = tiles.map(
       (t) {
         if (t.id == tile.id) {
+          isUpdated = true;
           return tile;
         }
 
         return t;
       },
     ).toList();
+
+    if (!isUpdated) {
+      newTiles.add(tile);
+    }
 
     return copyWith(tiles: newTiles);
   }

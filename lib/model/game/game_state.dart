@@ -1,5 +1,9 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'dart:math';
 
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../common/random_extension.dart';
 import '../../service/game/direction.dart';
 import '../tile_map/tile.dart';
 import '../tile_map/tile_map.dart';
@@ -26,6 +30,8 @@ class GameState with _$GameState {
   // Proxy methods
   PlayerTile? get playerTile => tileMap.playerTile;
   String? get playerTileId => tileMap.playerTileId;
+  int get tileCount => tileMap.tileCount;
+
   Tile? findTile(String id) => tileMap.findTile(id);
   List<Tile> getTilesAt(int x, int y) => tileMap.getTilesAt(x, y);
   bool isBlockingAt(int x, int y) => tileMap.isBlockingAt(x, y);
@@ -65,6 +71,49 @@ class GameState with _$GameState {
 
       final newTile = tile.copyWithMoveCooldown(cooldown);
       newGameState = newGameState.copyWithTile(newTile);
+    }
+
+    return newGameState;
+  }
+
+  GameState copyWithSpawnedEnemy({
+    int count = 10,
+    int minPlayerDistance = 8,
+    int maxPlayerDistance = 12,
+    int maxTileCount = 50,
+  }) {
+    final random = Random();
+    const uuid = Uuid();
+
+    var newGameState = copyWith();
+    final playerTile = this.playerTile;
+    if (playerTile == null) {
+      return newGameState;
+    }
+
+    for (var i = 0; i < count; i++) {
+      if (newGameState.tileCount >= maxTileCount) {
+        break;
+      }
+
+      final distanceX = random.nextIntRange(
+        minPlayerDistance,
+        maxPlayerDistance,
+      );
+
+      final distanceY = random.nextIntRange(
+        minPlayerDistance,
+        maxPlayerDistance,
+      );
+
+      final x = playerTile.x + (distanceX * random.nextSign());
+      final y = playerTile.y + (distanceY * random.nextSign());
+      if (newGameState.isBlockingAt(x, y)) {
+        continue;
+      }
+
+      final enemyTile = Tile.createEnemy(uuid.v4(), x, y);
+      newGameState = newGameState.copyWithTile(enemyTile);
     }
 
     return newGameState;
