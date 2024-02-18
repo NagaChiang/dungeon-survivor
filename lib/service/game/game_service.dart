@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../app/app_color.dart';
 import '../../common/logger.dart';
 import '../../model/game/game_repository.dart';
 import '../../model/game/game_state.dart';
@@ -225,33 +224,19 @@ class GameService {
   }
 
   void _createNewGame() {
-    final player = Tile.player(
-      id: _uuid.v4(),
-      x: 50,
-      y: 50,
-      glyph: '@',
-      colorValue: AppColor.white87.value,
-      isBlocking: true,
-      health: 100,
-      maxHealth: 100,
-      moveCooldown: 0,
-      maxMoveCooldown: 1,
+    final player = Tile.createPlayer(
+      _uuid.v4(),
+      50,
+      50,
     );
 
     final rats = List.generate(
       10,
       (index) {
-        return Tile.enemy(
-          id: _uuid.v4(),
-          x: 50 + index + 1,
-          y: 50 + index + 1,
-          glyph: 'r',
-          colorValue: Colors.orangeAccent.value,
-          isBlocking: true,
-          health: 10,
-          maxHealth: 10,
-          moveCooldown: 0,
-          maxMoveCooldown: 2,
+        return Tile.createEnemy(
+          _uuid.v4(),
+          50 + index + 1,
+          50 + index + 1,
         );
       },
     );

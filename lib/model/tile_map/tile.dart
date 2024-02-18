@@ -1,7 +1,7 @@
-import 'dart:ui';
-
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../app/app_color.dart';
 import '../unit/health.dart';
 import '../unit/movable.dart';
 
@@ -64,5 +64,43 @@ class Tile with _$Tile {
       default:
         return this;
     }
+  }
+
+  static Tile createPlayer(
+    String id,
+    int x,
+    int y,
+  ) {
+    return Tile.player(
+      id: id,
+      x: x,
+      y: y,
+      glyph: '@',
+      colorValue: AppColor.white87.value,
+      isBlocking: true,
+      health: 100,
+      maxHealth: 100,
+      moveCooldown: 0,
+      maxMoveCooldown: 1,
+    );
+  }
+
+  static Tile createEnemy(
+    String id,
+    int x,
+    int y,
+  ) {
+    return Tile.enemy(
+      id: id,
+      x: x,
+      y: y,
+      glyph: 'r',
+      colorValue: Colors.orangeAccent.value,
+      isBlocking: true,
+      health: 10,
+      maxHealth: 10,
+      moveCooldown: 0,
+      maxMoveCooldown: 2,
+    );
   }
 }
