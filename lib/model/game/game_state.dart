@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../service/game/direction.dart';
 import '../tile_map/tile.dart';
 import '../tile_map/tile_map.dart';
+import '../unit/movable.dart';
 
 part 'game_state.freezed.dart';
 part 'game_state.g.dart';
@@ -45,5 +46,27 @@ class GameState with _$GameState {
   GameState copyWithTile(Tile tile) {
     final newTileMap = tileMap.copyWithTile(tile);
     return copyWith(tileMap: newTileMap);
+  }
+
+  GameState copyWithUpdatedMoveCooldown() {
+    var newGameState = copyWith();
+    for (final tile in tileMap.tiles) {
+      final movable = tile as Movable?;
+      if (movable == null) {
+        continue;
+      }
+
+      var cooldown = movable.moveCooldown;
+      if (cooldown <= 0) {
+        cooldown = movable.maxMoveCooldown;
+      }
+
+      cooldown -= 1;
+
+      final newTile = tile.copyWithMoveCooldown(cooldown);
+      newGameState = newGameState.copyWithTile(newTile);
+    }
+
+    return newGameState;
   }
 }

@@ -201,25 +201,7 @@ class GameService {
       return;
     }
 
-    var newGameState = gameState.copyWith();
-    final tiles = gameState.tileMap.tiles;
-    for (final tile in tiles) {
-      final movable = tile as Movable?;
-      if (movable == null) {
-        continue;
-      }
-
-      var cooldown = movable.moveCooldown;
-      if (cooldown <= 0) {
-        cooldown = movable.maxMoveCooldown;
-      }
-
-      cooldown -= 1;
-
-      final newTile = tile.copyWithMoveCooldown(cooldown);
-      newGameState = newGameState.copyWithTile(newTile);
-    }
-
+    var newGameState = gameState.copyWithUpdatedMoveCooldown();
     _gameRepo.updateGameState(newGameState);
   }
 
