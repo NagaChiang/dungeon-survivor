@@ -33,14 +33,16 @@ class App extends StatelessWidget {
             providers: [
               Provider(create: GameViewModel.create),
             ],
-            child: GameWidget.controlled(
-              gameFactory: MainGame.new,
-              overlayBuilderMap: {
-                HudView.overlayName: (_, __) => const HudView(),
-              },
-              initialActiveOverlays: const [
-                HudView.overlayName,
-              ],
+            child: Material(
+              child: GameWidget.controlled(
+                gameFactory: MainGame.new,
+                overlayBuilderMap: {
+                  HudView.overlayName: (_, __) => const HudView(),
+                },
+                initialActiveOverlays: const [
+                  HudView.overlayName,
+                ],
+              ),
             ),
           ),
         ),
