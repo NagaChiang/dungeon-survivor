@@ -21,6 +21,7 @@ class TileComponent extends PositionComponent
         style: AppText.h6.copyWith(color: tile.color),
       ),
       anchor: Anchor.center,
+      position: Vector2(0, -2),
     );
 
     final tileComp = TileComponent(
