@@ -11,7 +11,7 @@ enum Direction {
     this.dy,
   );
 
-  factory Direction.fromXY(int dx, int dy) {
+  factory Direction.fromDelta(int dx, int dy) {
     if (dx == 0 && dy == 0) {
       return stop;
     }

@@ -78,29 +78,24 @@ class TileMap with _$TileMap {
   }
 
   Direction getValidDirectionTo(Tile fromTile, Tile toTile) {
-    final dx = toTile.x - fromTile.x;
-    final dy = toTile.y - fromTile.y;
+    final coords = Direction.values
+        .where(
+          (d) => d != Direction.stop,
+        )
+        .map((dir) => (fromTile.x + dir.dx, fromTile.y + dir.dy))
+        .sortedByCompare(
+          (coord) => (toTile.x - coord.$1).abs() + (toTile.y - coord.$2).abs(),
+          (a, b) => a.compareTo(b),
+        )
+        .where(
+          (coord) => !isBlockingAt(coord.$1, coord.$2),
+        );
 
-    if (dx == 0 && dy == 0) {
-      return Direction.stop;
-    }
-
-    final xDir = Direction.fromXY(dx, 0);
-    final xTileX = fromTile.x + xDir.dx;
-    final xTileY = fromTile.y + xDir.dy;
-    final xIsBlocking = isBlockingAt(xTileX, xTileY);
-
-    final yDir = Direction.fromXY(0, dy);
-    final yTileX = fromTile.x + yDir.dx;
-    final yTileY = fromTile.y + yDir.dy;
-    final yIsBlocking = isBlockingAt(yTileX, yTileY);
-
-    if (dx.abs() > dy.abs() && !xIsBlocking) {
-      return xDir;
-    }
-
-    if (!yIsBlocking) {
-      return yDir;
+    final coord = coords.firstOrNull;
+    if (coord != null) {
+      final dx = coord.$1 - fromTile.x;
+      final dy = coord.$2 - fromTile.y;
+      return Direction.fromDelta(dx, dy);
     }
 
     return Direction.stop;
