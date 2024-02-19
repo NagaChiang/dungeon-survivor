@@ -7,6 +7,8 @@ import '../../common/random_extension.dart';
 import '../../service/game/direction.dart';
 import '../tile_map/tile.dart';
 import '../tile_map/tile_map.dart';
+import '../unit/attackable.dart';
+import '../unit/health.dart';
 import '../unit/movable.dart';
 
 part 'game_state.freezed.dart';
@@ -36,6 +38,8 @@ class GameState with _$GameState {
   List<Tile> getTilesAt(int x, int y) => tileMap.getTilesAt(x, y);
   bool isBlockingAt(int x, int y) => tileMap.isBlockingAt(x, y);
 
+  bool get isGameOver => playerTile == null;
+
   Direction getValidDirectionToPlayer(Tile tile) {
     return tileMap.getValidDirectionToPlayer(tile);
   }
@@ -51,6 +55,11 @@ class GameState with _$GameState {
 
   GameState addOrUpdateTile(Tile tile) {
     final newTileMap = tileMap.addOrUpdateTile(tile);
+    return copyWith(tileMap: newTileMap);
+  }
+
+  GameState removeTile(String id) {
+    final newTileMap = tileMap.removeTile(id);
     return copyWith(tileMap: newTileMap);
   }
 
@@ -74,8 +83,24 @@ class GameState with _$GameState {
 
       cooldown -= 1;
 
-      final newTile = tile.copyWithMoveCooldown(cooldown);
+      final newTile = tile.updateMoveCooldown(cooldown);
       newGameState = newGameState.addOrUpdateTile(newTile);
+    }
+
+    return newGameState;
+  }
+
+  GameState removeDeadTiles() {
+    var newGameState = copyWith();
+    for (final tile in tileMap.tiles) {
+      final health = tile as Health?;
+      if (health == null) {
+        continue;
+      }
+
+      if (health.health <= 0) {
+        newGameState = newGameState.removeTile(tile.id);
+      }
     }
 
     return newGameState;
@@ -131,5 +156,37 @@ class GameState with _$GameState {
     }
 
     return tileMap.isCloseToTile(tile, playerTile);
+  }
+
+  GameState attackPlayer(Tile attacker) {
+    final playerTile = this.playerTile;
+    if (playerTile == null) {
+      return this;
+    }
+
+    return attackTile(attacker, playerTile);
+  }
+
+  GameState attackTile(Tile attacker, Tile defender) {
+    final isAttackerExist = tileMap.tiles.any((t) => t.id == attacker.id);
+    final isDefenderExist = tileMap.tiles.any((t) => t.id == defender.id);
+    if (!isAttackerExist || !isDefenderExist) {
+      return this;
+    }
+
+    final attackable = attacker as Attackable?;
+    if (attackable == null) {
+      return this;
+    }
+
+    final health = defender as Health?;
+    if (health == null) {
+      return this;
+    }
+
+    final newHealth = max(health.health - attackable.damage, 0);
+    final newDefender = defender.updateHealth(newHealth);
+
+    return addOrUpdateTile(newDefender);
   }
 }

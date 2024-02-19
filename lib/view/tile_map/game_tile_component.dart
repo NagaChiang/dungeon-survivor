@@ -7,14 +7,15 @@ import 'tile_component.dart';
 
 class GameTileComponent extends Component with HasGameRef {
   GameTileComponent({
-    required this.tileId,
+    required this.id,
   });
 
-  final String tileId;
+  final String id;
 
   late final GameViewModel _viewModel;
 
-  TileComponent? _tileComp;
+  final _tileCompSubject = BehaviorSubject<TileComponent>();
+  late final tileCompStream = _tileCompSubject.stream;
 
   final _sub = CompositeSubscription();
 
@@ -34,13 +35,13 @@ class GameTileComponent extends Component with HasGameRef {
   }
 
   void _subscribeTile() {
-    _viewModel.getTileStream(tileId).listen((tile) {
-      var comp = _tileComp;
+    _viewModel.getTileStream(id).listen((tile) {
+      var comp = _tileCompSubject.valueOrNull;
       if (comp == null) {
         comp = TileComponent.fromTile(tile);
 
         add(comp);
-        _tileComp = comp;
+        _tileCompSubject.add(comp);
       }
 
       comp.tileX = tile.x;

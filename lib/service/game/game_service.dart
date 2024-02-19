@@ -88,11 +88,15 @@ class GameService {
     _gameRepo.actionTileIdStream.listen((actionTileId) {
       logger.trace('Start action: $actionTileId', tag: _tag);
 
+      if (_gameRepo.gameState?.isGameOver == true) {
+        return;
+      }
+
       if (actionTileId == _gameRepo.gameState?.playerTileId) {
         return;
       }
 
-      _startEnemyAction(actionTileId);
+      Future(() => _startEnemyAction(actionTileId));
     }).addTo(_sub);
   }
 
@@ -117,6 +121,10 @@ class GameService {
 
     final direction = newGameState.getValidDirectionToPlayer(actionTile);
     newGameState = newGameState.moveTile(actionTile, direction);
+
+    if (newGameState.isCloseToPlayer(actionTile)) {
+      newGameState = newGameState.attackPlayer(actionTile);
+    }
 
     _gameRepo.updateGameState(newGameState);
 
@@ -172,6 +180,7 @@ class GameService {
       newGameState = newGameState.addOrUpdateTile(newTile);
     }
 
+    newGameState = newGameState.removeDeadTiles();
     _gameRepo.updateGameState(newGameState);
 
     if (isNextPlayerAction) {

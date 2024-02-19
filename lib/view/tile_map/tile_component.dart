@@ -45,14 +45,6 @@ class TileComponent extends PositionComponent
 
     final targetPos = ancestor.getTilePosition(tileX, tileY);
     position.setFrom(targetPos);
-
-    ancestor.registerTile(this);
-  }
-
-  @override
-  void onRemove() {
-    ancestor.unregisterTile(this);
-    super.onRemove();
   }
 
   @override

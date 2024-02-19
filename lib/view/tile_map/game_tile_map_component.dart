@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../game/game_view_model.dart';
-import 'tile_component.dart';
+import 'game_tile_component.dart';
 import 'tile_map_component.dart';
 
 class GameTileMapComponent extends Component with HasGameRef {
@@ -11,7 +11,7 @@ class GameTileMapComponent extends Component with HasGameRef {
 
   TileMapComponent? _tileMapComp;
 
-  final _tileCompMapSubject = BehaviorSubject<Map<String, TileComponent>>();
+  final _tileCompMapSubject = BehaviorSubject<Map<String, GameTileComponent>>();
   late final tileCompMapStream = _tileCompMapSubject.stream;
 
   final _sub = CompositeSubscription();

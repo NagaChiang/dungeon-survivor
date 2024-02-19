@@ -68,6 +68,11 @@ class TileMap with _$TileMap {
     return copyWith(tiles: newTiles);
   }
 
+  TileMap removeTile(String id) {
+    final newTiles = tiles.where((t) => t.id != id).toList();
+    return copyWith(tiles: newTiles);
+  }
+
   TileMap moveTile(Tile tile, Direction direction) {
     final isExist = tiles.any((t) => t.id == tile.id);
     if (!isExist) {

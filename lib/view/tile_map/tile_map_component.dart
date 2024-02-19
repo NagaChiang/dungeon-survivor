@@ -5,7 +5,6 @@ import 'package:rxdart/rxdart.dart';
 import '../../app/app_color.dart';
 import '../../model/tile_map/tile_map.dart';
 import 'game_tile_component.dart';
-import 'tile_component.dart';
 
 class TileMapComponent extends PositionComponent {
   TileMapComponent({
@@ -36,7 +35,7 @@ class TileMapComponent extends PositionComponent {
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1;
 
-  final _tileCompMapSubject = BehaviorSubject<Map<String, TileComponent>>();
+  final _tileCompMapSubject = BehaviorSubject<Map<String, GameTileComponent>>();
   late final tileCompMapStream = _tileCompMapSubject.stream;
 
   @override
@@ -53,23 +52,12 @@ class TileMapComponent extends PositionComponent {
     );
   }
 
-  void registerTile(TileComponent tileComp) {
-    final tileCompMap = _tileCompMapSubject.valueOrNull ?? {};
-    tileCompMap[tileComp.id] = tileComp;
-    _tileCompMapSubject.add(tileCompMap);
-  }
-
-  void unregisterTile(TileComponent tile) {
-    final tileCompMap = _tileCompMapSubject.valueOrNull ?? {};
-    tileCompMap.remove(tile.id);
-    _tileCompMapSubject.add(tileCompMap);
-  }
-
   void updateTileIdSet(Set<String> newIdSet) {
     final addedTileIds = newIdSet.difference(tileIdSet);
     for (final id in addedTileIds) {
-      final tileComp = GameTileComponent(tileId: id);
+      final tileComp = GameTileComponent(id: id);
       add(tileComp);
+      _registerTile(tileComp);
     }
 
     final removedTileIds = tileIdSet.difference(newIdSet);
@@ -77,6 +65,7 @@ class TileMapComponent extends PositionComponent {
     for (final id in removedTileIds) {
       final tileComp = tileCompMap[id];
       if (tileComp != null) {
+        _unregisterTile(tileComp);
         remove(tileComp);
       }
     }
@@ -105,5 +94,17 @@ class TileMapComponent extends PositionComponent {
         _gridLinePaint,
       );
     }
+  }
+
+  void _registerTile(GameTileComponent tileComp) {
+    final tileCompMap = _tileCompMapSubject.valueOrNull ?? {};
+    tileCompMap[tileComp.id] = tileComp;
+    _tileCompMapSubject.add(tileCompMap);
+  }
+
+  void _unregisterTile(GameTileComponent tile) {
+    final tileCompMap = _tileCompMapSubject.valueOrNull ?? {};
+    tileCompMap.remove(tile.id);
+    _tileCompMapSubject.add(tileCompMap);
   }
 }

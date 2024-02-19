@@ -41,8 +41,10 @@ class MainGame extends FlameGame {
       _viewModel.playerTileIdStream,
       _tileMapComp.tileCompMapStream,
       (playerTileId, tileCompMap) => tileCompMap[playerTileId],
-    ).whereNotNull().listen((playerTile) {
-      camera.follow(playerTile, snap: true);
-    }).addTo(_sub);
+    ).whereNotNull().flatMap((gameTile) => gameTile.tileCompStream).listen(
+      (tileComp) {
+        camera.follow(tileComp, snap: true);
+      },
+    ).addTo(_sub);
   }
 }
