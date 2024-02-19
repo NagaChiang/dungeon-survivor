@@ -62,11 +62,7 @@ class GameService {
       return;
     }
 
-    var newGameState = gameState.moveTile(playerTile, direction);
-
-    _gameRepo.updateGameState(newGameState);
-
-    _endAction();
+    Future(() => _startPlayerAction(playerTile, direction));
   }
 
   bool _canMove(Tile tile) {
@@ -98,6 +94,63 @@ class GameService {
 
       Future(() => _startEnemyAction(actionTileId));
     }).addTo(_sub);
+  }
+
+  void _startPlayerAction(Tile playerTile, Direction direction) {
+    final gameState = _gameRepo.gameState;
+    if (gameState == null) {
+      logger.error('Game state not found', tag: _tag);
+      return;
+    }
+
+    var newGameState = gameState.copyWith();
+    newGameState = newGameState.moveTile(playerTile, direction);
+
+    final newPlayerTile = newGameState.playerTile;
+    if (newPlayerTile == null) {
+      logger.error('Player tile not found', tag: _tag);
+      _endAction();
+
+      return;
+    }
+
+    const rangeX = 3;
+    const rangeY = 1;
+    final coords = <(int, int)>[];
+    const blacklistCoords = {
+      (0, 0),
+      (0, -1),
+      (0, 1),
+      (1, -1),
+      (1, 1),
+      (-1, -1),
+      (-1, 1),
+    };
+
+    for (var x = -rangeX; x <= rangeX; x++) {
+      for (var y = -rangeY; y <= rangeY; y++) {
+        if (blacklistCoords.contains((x, y))) {
+          continue;
+        }
+
+        coords.add((x, y));
+      }
+    }
+
+    for (final (x, y) in coords) {
+      final tiles = newGameState.getTilesAt(
+        newPlayerTile.x + x,
+        newPlayerTile.y + y,
+      );
+
+      for (final tile in tiles) {
+        newGameState = newGameState.attackTile(playerTile, tile);
+      }
+    }
+
+    _gameRepo.updateGameState(newGameState);
+
+    _endAction();
   }
 
   void _startEnemyAction(String actionTileId) {
