@@ -107,10 +107,10 @@ class GameState with _$GameState {
   }
 
   GameState spawnEnemies({
-    int count = 10,
+    int count = 50,
     int minPlayerDistance = 8,
     int maxPlayerDistance = 12,
-    int maxTileCount = 50,
+    int maxTileCount = 100,
   }) {
     final random = Random();
     const uuid = Uuid();

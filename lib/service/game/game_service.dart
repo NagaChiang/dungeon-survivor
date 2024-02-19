@@ -143,29 +143,6 @@ class GameService {
       tag: _tag,
     );
 
-    final oldTile = oldGameState.findTile(oldGameState.actionTileId);
-    final oldMovable = oldTile as Movable?;
-
-    Tile? newTile;
-    if (oldMovable != null) {
-      var cooldown = oldMovable.moveCooldown;
-      if (cooldown <= 0) {
-        cooldown = oldMovable.maxMoveCooldown;
-      }
-
-      cooldown -= 1;
-      switch (oldTile) {
-        case (PlayerTile _):
-          newTile = oldTile.copyWith(moveCooldown: cooldown);
-          break;
-        case (EnemyTile _):
-          newTile = oldTile.copyWith(moveCooldown: cooldown);
-          break;
-        default:
-          break;
-      }
-    }
-
     final nextActionTileId = oldGameState.findNextActionTileId();
     final isNextPlayerAction = nextActionTileId == oldGameState.playerTileId;
 
@@ -175,10 +152,6 @@ class GameService {
       turnCount: nextTurnCount,
       actionTileId: nextActionTileId,
     );
-
-    if (newTile != null) {
-      newGameState = newGameState.addOrUpdateTile(newTile);
-    }
 
     newGameState = newGameState.removeDeadTiles();
     _gameRepo.updateGameState(newGameState);
