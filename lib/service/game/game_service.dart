@@ -62,7 +62,10 @@ class GameService {
       return;
     }
 
-    _moveTile(playerTile, direction);
+    var newGameState = gameState.moveTile(playerTile, direction);
+
+    _gameRepo.updateGameState(newGameState);
+
     _endAction();
   }
 
@@ -79,26 +82,6 @@ class GameService {
     }
 
     return movable.moveCooldown <= 0;
-  }
-
-  void _moveTile(Tile tile, Direction direction) {
-    final oldGameState = _gameRepo.gameState;
-    if (oldGameState == null) {
-      logger.warning('Game state not found', tag: _tag);
-      return;
-    }
-
-    final newX = tile.x + direction.dx;
-    final newY = tile.y + direction.dy;
-    final isBlocking = oldGameState.isBlockingAt(newX, newY);
-    if (isBlocking) {
-      return;
-    }
-
-    final newTile = tile.copyWith(x: newX, y: newY);
-    final newGameState = oldGameState.copyWithTile(newTile);
-
-    _gameRepo.updateGameState(newGameState);
   }
 
   void _subscribeActionTileId() {
@@ -120,7 +103,8 @@ class GameService {
       return;
     }
 
-    final actionTile = gameState.tileMap.findTile(actionTileId);
+    var newGameState = gameState.copyWith();
+    final actionTile = newGameState.tileMap.findTile(actionTileId);
     if (actionTile == null) {
       logger.error('Action tile not found: $actionTileId', tag: _tag);
       return;
@@ -131,9 +115,11 @@ class GameService {
       return;
     }
 
-    final direction = gameState.getValidDirectionToPlayer(actionTile);
+    final direction = newGameState.getValidDirectionToPlayer(actionTile);
+    newGameState = newGameState.moveTile(actionTile, direction);
 
-    _moveTile(actionTile, direction);
+    _gameRepo.updateGameState(newGameState);
+
     _endAction();
   }
 
@@ -183,7 +169,7 @@ class GameService {
     );
 
     if (newTile != null) {
-      newGameState = newGameState.copyWithTile(newTile);
+      newGameState = newGameState.addOrUpdateTile(newTile);
     }
 
     _gameRepo.updateGameState(newGameState);
@@ -201,8 +187,8 @@ class GameService {
       return;
     }
 
-    var newGameState = gameState.copyWithUpdatedMoveCooldown();
-    newGameState = newGameState.copyWithSpawnedEnemy();
+    var newGameState = gameState.updateMoveCooldown();
+    newGameState = newGameState.spawnEnemies();
     _gameRepo.updateGameState(newGameState);
   }
 

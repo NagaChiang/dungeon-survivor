@@ -48,7 +48,7 @@ class TileMap with _$TileMap {
     return x >= 0 && x < widthTileCount && y >= 0 && y < heightTileCount;
   }
 
-  TileMap copyWithTile(Tile tile) {
+  TileMap addOrUpdateTile(Tile tile) {
     var isUpdated = false;
     final newTiles = tiles.map(
       (t) {
@@ -66,6 +66,24 @@ class TileMap with _$TileMap {
     }
 
     return copyWith(tiles: newTiles);
+  }
+
+  TileMap moveTile(Tile tile, Direction direction) {
+    final isExist = tiles.any((t) => t.id == tile.id);
+    if (!isExist) {
+      return this;
+    }
+
+    final newX = tile.x + direction.dx;
+    final newY = tile.y + direction.dy;
+    final isBlocking = isBlockingAt(newX, newY);
+    if (isBlocking) {
+      return this;
+    }
+
+    final newTile = tile.copyWith(x: newX, y: newY);
+
+    return addOrUpdateTile(newTile);
   }
 
   Direction getValidDirectionToPlayer(Tile tile) {
@@ -99,5 +117,20 @@ class TileMap with _$TileMap {
     }
 
     return Direction.stop;
+  }
+
+  bool isCloseToTile(Tile fromTile, Tile toTile) {
+    final coordSet = <(int, int)>{};
+    for (int x = -1; x <= 1; x++) {
+      for (int y = -1; y <= 1; y++) {
+        if (x == 0 && y == 0) {
+          continue;
+        }
+
+        coordSet.add((toTile.x + x, toTile.y + y));
+      }
+    }
+
+    return coordSet.contains((fromTile.x, fromTile.y));
   }
 }

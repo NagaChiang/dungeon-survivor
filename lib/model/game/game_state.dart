@@ -49,12 +49,17 @@ class GameState with _$GameState {
     return tiles[nextIndex].id;
   }
 
-  GameState copyWithTile(Tile tile) {
-    final newTileMap = tileMap.copyWithTile(tile);
+  GameState addOrUpdateTile(Tile tile) {
+    final newTileMap = tileMap.addOrUpdateTile(tile);
     return copyWith(tileMap: newTileMap);
   }
 
-  GameState copyWithUpdatedMoveCooldown() {
+  GameState moveTile(Tile tile, Direction direction) {
+    final newTileMap = tileMap.moveTile(tile, direction);
+    return copyWith(tileMap: newTileMap);
+  }
+
+  GameState updateMoveCooldown() {
     var newGameState = copyWith();
     for (final tile in tileMap.tiles) {
       final movable = tile as Movable?;
@@ -70,13 +75,13 @@ class GameState with _$GameState {
       cooldown -= 1;
 
       final newTile = tile.copyWithMoveCooldown(cooldown);
-      newGameState = newGameState.copyWithTile(newTile);
+      newGameState = newGameState.addOrUpdateTile(newTile);
     }
 
     return newGameState;
   }
 
-  GameState copyWithSpawnedEnemy({
+  GameState spawnEnemies({
     int count = 10,
     int minPlayerDistance = 8,
     int maxPlayerDistance = 12,
@@ -113,9 +118,18 @@ class GameState with _$GameState {
       }
 
       final enemyTile = Tile.createEnemy(uuid.v4(), x, y);
-      newGameState = newGameState.copyWithTile(enemyTile);
+      newGameState = newGameState.addOrUpdateTile(enemyTile);
     }
 
     return newGameState;
+  }
+
+  bool isCloseToPlayer(Tile tile) {
+    final playerTile = this.playerTile;
+    if (playerTile == null) {
+      return false;
+    }
+
+    return tileMap.isCloseToTile(tile, playerTile);
   }
 }
