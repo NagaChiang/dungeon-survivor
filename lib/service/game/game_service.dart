@@ -9,6 +9,7 @@ import '../../model/game/game_state.dart';
 import '../../model/tile_map/tile.dart';
 import '../../model/tile_map/tile_map.dart';
 import '../../model/unit/movable.dart';
+import '../event/damage_event.dart';
 import 'direction.dart';
 
 class GameService {
@@ -22,6 +23,9 @@ class GameService {
   Stream<TileMap> get tileMapStream => _gameRepo.tileMapStream;
   Stream<PlayerTile> get playerTileStream => _gameRepo.playerTileStream;
   Stream<String> get playerTileIdStream => _gameRepo.playerTileIdStream;
+
+  final _damageEventSubject = BehaviorSubject<DamageEvent>();
+  late final damageEventStream = _damageEventSubject.stream;
 
   final _sub = CompositeSubscription();
   final _uuid = const Uuid();
@@ -144,7 +148,12 @@ class GameService {
       );
 
       for (final tile in tiles) {
-        newGameState = newGameState.attackTile(playerTile, tile);
+        final DamageEvent? damageEvent;
+        (newGameState, damageEvent) = newGameState.attackTile(playerTile, tile);
+
+        if (damageEvent != null) {
+          _damageEventSubject.add(damageEvent);
+        }
       }
     }
 
@@ -176,7 +185,12 @@ class GameService {
     newGameState = newGameState.moveTile(actionTile, direction);
 
     if (newGameState.isCloseToPlayer(actionTile)) {
-      newGameState = newGameState.attackPlayer(actionTile);
+      final DamageEvent? damageEvent;
+      (newGameState, damageEvent) = newGameState.attackPlayer(actionTile);
+
+      if (damageEvent != null) {
+        _damageEventSubject.add(damageEvent);
+      }
     }
 
     _gameRepo.updateGameState(newGameState);

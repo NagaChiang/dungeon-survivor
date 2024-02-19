@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../common/random_extension.dart';
+import '../../service/event/damage_event.dart';
 import '../../service/game/direction.dart';
 import '../tile_map/tile.dart';
 import '../tile_map/tile_map.dart';
@@ -158,35 +159,41 @@ class GameState with _$GameState {
     return tileMap.isCloseToTile(tile, playerTile);
   }
 
-  GameState attackPlayer(Tile attacker) {
+  (GameState, DamageEvent?) attackPlayer(Tile attacker) {
     final playerTile = this.playerTile;
     if (playerTile == null) {
-      return this;
+      return (this, null);
     }
 
     return attackTile(attacker, playerTile);
   }
 
-  GameState attackTile(Tile attacker, Tile defender) {
+  (GameState, DamageEvent?) attackTile(Tile attacker, Tile defender) {
     final isAttackerExist = tileMap.tiles.any((t) => t.id == attacker.id);
     final isDefenderExist = tileMap.tiles.any((t) => t.id == defender.id);
     if (!isAttackerExist || !isDefenderExist) {
-      return this;
+      return (this, null);
     }
 
     final attackable = attacker as Attackable?;
     if (attackable == null) {
-      return this;
+      return (this, null);
     }
 
     final health = defender as Health?;
     if (health == null) {
-      return this;
+      return (this, null);
     }
 
     final newHealth = max(health.health - attackable.damage, 0);
     final newDefender = defender.updateHealth(newHealth);
 
-    return addOrUpdateTile(newDefender);
+    final damageEvent = DamageEvent(
+      attackerId: attacker.id,
+      defenderId: defender.id,
+      damage: attackable.damage,
+    );
+
+    return (addOrUpdateTile(newDefender), damageEvent);
   }
 }
