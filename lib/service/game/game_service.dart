@@ -196,17 +196,17 @@ class GameService {
       tag: _tag,
     );
 
-    final nextActionTileId = oldGameState.findNextActionTileId();
-    final isNextPlayerAction = nextActionTileId == oldGameState.playerTileId;
+    var newGameState = oldGameState.removeDeadTiles();
+    final nextActionTileId = newGameState.findNextActionTileId();
+    final isNextPlayerAction = nextActionTileId == newGameState.playerTileId;
 
-    final oldTimeSec = oldGameState.turnCount;
+    final oldTimeSec = newGameState.turnCount;
     final nextTurnCount = isNextPlayerAction ? oldTimeSec + 1 : oldTimeSec;
-    var newGameState = oldGameState.copyWith(
+    newGameState = newGameState.copyWith(
       turnCount: nextTurnCount,
       actionTileId: nextActionTileId,
     );
 
-    newGameState = newGameState.removeDeadTiles();
     _gameRepo.updateGameState(newGameState);
 
     if (isNextPlayerAction) {
