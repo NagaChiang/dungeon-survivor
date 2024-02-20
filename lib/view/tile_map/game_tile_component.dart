@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../game/game_view_model.dart';
+import '../vfx/explosion_paritcle_component.dart';
 import '../vfx/popup_text_component.dart';
 import 'tile_component.dart';
 
@@ -32,6 +33,8 @@ class GameTileComponent extends Component with HasGameRef {
 
   @override
   void onRemove() {
+    _spawnExplosion();
+
     _sub.clear();
     super.onRemove();
   }
@@ -65,5 +68,18 @@ class GameTileComponent extends Component with HasGameRef {
 
       game.world.add(popupTextComp);
     }).addTo(_sub);
+  }
+
+  void _spawnExplosion() {
+    final comp = _tileCompSubject.valueOrNull;
+    if (comp == null) {
+      return;
+    }
+
+    final explosion = ExplosionParticleComponent(
+      position: comp.position,
+    );
+
+    game.world.add(explosion);
   }
 }
