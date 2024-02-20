@@ -40,6 +40,12 @@ class GameViewModel {
     return _gameService.getTileStream(id);
   }
 
+  Stream<DamageEvent> getTileDamageEventStream(String id) {
+    return damageEventStream.where(
+      (event) => event.defenderId == id,
+    );
+  }
+
   static GameViewModel create(BuildContext context) {
     return GameViewModel(context.read());
   }

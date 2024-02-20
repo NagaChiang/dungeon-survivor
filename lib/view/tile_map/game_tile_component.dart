@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../game/game_view_model.dart';
+import '../vfx/popup_text_component.dart';
 import 'tile_component.dart';
 
 class GameTileComponent extends Component with HasGameRef {
@@ -26,6 +27,7 @@ class GameTileComponent extends Component with HasGameRef {
     _viewModel = gameRef.buildContext!.read();
 
     _subscribeTile();
+    _subscribeDamageEvent();
   }
 
   @override
@@ -46,6 +48,22 @@ class GameTileComponent extends Component with HasGameRef {
 
       comp.tileX = tile.x;
       comp.tileY = tile.y;
+    }).addTo(_sub);
+  }
+
+  void _subscribeDamageEvent() {
+    CombineLatestStream.combine2(
+      _tileCompSubject,
+      _viewModel.getTileDamageEventStream(id),
+      (comp, event) => (comp, event),
+    ).listen((record) {
+      final (comp, event) = record;
+      final popupTextComp = PopupTextComponent(
+        position: comp.position,
+        text: event.damage.toString(),
+      );
+
+      game.world.add(popupTextComp);
     }).addTo(_sub);
   }
 }
