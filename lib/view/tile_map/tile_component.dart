@@ -4,8 +4,7 @@ import '../../app/app_text.dart';
 import '../../model/tile_map/tile.dart';
 import 'tile_map_component.dart';
 
-class TileComponent extends PositionComponent
-    with HasAncestor<TileMapComponent> {
+class TileComponent extends TextComponent with HasAncestor<TileMapComponent> {
   TileComponent({
     required this.id,
     required this.tileX,
@@ -15,22 +14,18 @@ class TileComponent extends PositionComponent
         );
 
   factory TileComponent.fromTile(Tile tile) {
-    final textComp = TextComponent(
-      text: tile.glyph,
-      textRenderer: TextPaint(
-        style: AppText.h6.copyWith(color: tile.color),
-      ),
-      anchor: Anchor.center,
-      position: Vector2(0, -2),
-    );
-
     final tileComp = TileComponent(
       id: tile.id,
       tileX: tile.x,
       tileY: tile.y,
     );
 
-    tileComp.add(textComp);
+    tileComp
+      ..text = tile.glyph
+      ..textRenderer = TextPaint(
+        style: AppText.h6.copyWith(color: tile.color),
+      )
+      ..position = Vector2(0, -2);
 
     return tileComp;
   }

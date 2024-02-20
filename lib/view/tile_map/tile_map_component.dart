@@ -7,12 +7,17 @@ import '../../common/const.dart';
 import '../../model/tile_map/tile_map.dart';
 import 'game_tile_component.dart';
 
-class TileMapComponent extends PositionComponent {
+class TileMapComponent extends PositionComponent with HasPaint {
   TileMapComponent({
     required this.widthTileCount,
     required this.heightTileCount,
     required this.tileSize,
-  });
+  }) {
+    paint = Paint()
+      ..color = AppColor.white38
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+  }
 
   factory TileMapComponent.fromTileMap(TileMap tileMap) {
     final comp = TileMapComponent(
@@ -30,11 +35,6 @@ class TileMapComponent extends PositionComponent {
   final int heightTileCount;
   final int tileSize;
   final tileIdSet = <String>{};
-
-  final _gridLinePaint = Paint()
-    ..color = AppColor.white38
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 1;
 
   final _tileCompMapSubject = BehaviorSubject<Map<String, GameTileComponent>>();
   late final tileCompMapStream = _tileCompMapSubject.stream;
@@ -82,7 +82,7 @@ class TileMapComponent extends PositionComponent {
       canvas.drawLine(
         Offset(x.toDouble(), 0),
         Offset(x.toDouble(), y.toDouble()),
-        _gridLinePaint,
+        paint,
       );
     }
 
@@ -92,7 +92,7 @@ class TileMapComponent extends PositionComponent {
       canvas.drawLine(
         Offset(0, y.toDouble()),
         Offset(x.toDouble(), y.toDouble()),
-        _gridLinePaint,
+        paint,
       );
     }
   }
