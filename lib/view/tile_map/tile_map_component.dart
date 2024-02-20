@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../app/app_color.dart';
+import '../../common/const.dart';
 import '../../model/tile_map/tile_map.dart';
 import 'game_tile_component.dart';
 
@@ -17,7 +18,7 @@ class TileMapComponent extends PositionComponent {
     final comp = TileMapComponent(
       widthTileCount: tileMap.widthTileCount,
       heightTileCount: tileMap.heightTileCount,
-      tileSize: 32,
+      tileSize: Const.tileSize,
     );
 
     comp.updateTileIdSet(tileMap.tileIdSet);

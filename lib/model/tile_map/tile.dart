@@ -58,6 +58,7 @@ class Tile with _$Tile {
 
   factory Tile.fromJson(Map<String, dynamic> json) => _$TileFromJson(json);
 
+  (int, int) get coord => (x, y);
   Color get color => Color(colorValue);
 
   Tile updateHealth(int health) {

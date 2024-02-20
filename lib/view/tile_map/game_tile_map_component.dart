@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../game/game_view_model.dart';
+import '../vfx/square_effet_component.dart';
 import 'game_tile_component.dart';
 import 'tile_map_component.dart';
 
@@ -23,6 +24,7 @@ class GameTileMapComponent extends Component with HasGameRef {
     _viewModel = gameRef.buildContext!.read();
 
     _subscribeTileMap();
+    _subscribeAttackEvent();
   }
 
   @override
@@ -43,6 +45,25 @@ class GameTileMapComponent extends Component with HasGameRef {
       }
 
       tileMapComp.updateTileIdSet(tileMap.tileIdSet);
+    }).addTo(_sub);
+  }
+
+  void _subscribeAttackEvent() {
+    _viewModel.attackEventStream.listen((event) {
+      final tileMapComp = _tileMapComp;
+      if (tileMapComp == null) {
+        return;
+      }
+
+      for (final coord in event.targetCoords) {
+        final pos = tileMapComp.getTilePosition(coord.$1, coord.$2);
+        final comp = RectangleEffectComponent(
+          position: pos,
+          size: Vector2.all(tileMapComp.tileSize.toDouble()),
+        );
+
+        game.world.add(comp);
+      }
     }).addTo(_sub);
   }
 }

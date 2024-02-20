@@ -9,6 +9,7 @@ import '../../model/game/game_state.dart';
 import '../../model/tile_map/tile.dart';
 import '../../model/tile_map/tile_map.dart';
 import '../../model/unit/movable.dart';
+import '../event/attack_event.dart';
 import '../event/damage_event.dart';
 import 'direction.dart';
 
@@ -23,6 +24,9 @@ class GameService {
   Stream<TileMap> get tileMapStream => _gameRepo.tileMapStream;
   Stream<PlayerTile> get playerTileStream => _gameRepo.playerTileStream;
   Stream<String> get playerTileIdStream => _gameRepo.playerTileIdStream;
+
+  final _attackEventSubject = BehaviorSubject<AttackEvent>();
+  late final attackEventStream = _attackEventSubject.stream;
 
   final _damageEventSubject = BehaviorSubject<DamageEvent>();
   late final damageEventStream = _damageEventSubject.stream;
@@ -57,11 +61,6 @@ class GameService {
     }
 
     if (!_canMove(playerTile)) {
-      _endAction();
-      return;
-    }
-
-    if (direction == Direction.stop) {
       _endAction();
       return;
     }
@@ -141,12 +140,24 @@ class GameService {
       }
     }
 
-    for (final (x, y) in coords) {
-      final tiles = newGameState.getTilesAt(
-        newPlayerTile.x + x,
-        newPlayerTile.y + y,
-      );
+    final targetCoords = coords
+        .map(
+          (c) => (
+            newPlayerTile.coord.$1 + c.$1,
+            newPlayerTile.coord.$2 + c.$2,
+          ),
+        )
+        .toList();
 
+    final attackEvent = AttackEvent(
+      attackerId: newPlayerTile.id,
+      targetCoords: targetCoords,
+    );
+
+    _attackEventSubject.add(attackEvent);
+
+    for (final (x, y) in targetCoords) {
+      final tiles = newGameState.getTilesAt(x, y);
       for (final tile in tiles) {
         final DamageEvent? damageEvent;
         (newGameState, damageEvent) = newGameState.attackTile(playerTile, tile);
@@ -176,11 +187,6 @@ class GameService {
       return;
     }
 
-    if (!_canMove(actionTile)) {
-      _endAction();
-      return;
-    }
-
     final direction = newGameState.getValidDirectionToPlayer(actionTile);
     newGameState = newGameState.moveTile(actionTile, direction);
 
@@ -189,8 +195,20 @@ class GameService {
       (newGameState, damageEvent) = newGameState.attackPlayer(actionTile);
 
       if (damageEvent != null) {
+        final playerCoord = newGameState.playerTile?.coord;
+        final attackEvent = AttackEvent(
+          attackerId: actionTile.id,
+          targetCoords: [playerCoord!],
+        );
+
+        _attackEventSubject.add(attackEvent);
         _damageEventSubject.add(damageEvent);
       }
+    }
+
+    if (!_canMove(actionTile)) {
+      _endAction();
+      return;
     }
 
     _gameRepo.updateGameState(newGameState);
