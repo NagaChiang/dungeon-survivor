@@ -53,7 +53,7 @@ class _DamageOverlayState extends State<DamageOverlay>
         child: Container(
           decoration: const BoxDecoration(
             gradient: RadialGradient(
-              radius: 1.6,
+              radius: 1.2,
               colors: [
                 Colors.transparent,
                 AppColor.health,
