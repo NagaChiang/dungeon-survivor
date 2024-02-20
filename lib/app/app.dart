@@ -6,6 +6,7 @@ import '../model/game/game_repository.dart';
 import '../service/game/game_service.dart';
 import '../view/game/game_view_model.dart';
 import '../view/game/main_game.dart';
+import '../view/hud/damage_overlay.dart';
 import '../view/hud/hud_view.dart';
 import 'app_theme.dart';
 
@@ -38,9 +39,11 @@ class App extends StatelessWidget {
                 gameFactory: MainGame.new,
                 overlayBuilderMap: {
                   HudView.overlayName: (_, __) => const HudView(),
+                  DamageOverlay.overlayName: (_, __) => const DamageOverlay(),
                 },
                 initialActiveOverlays: const [
                   HudView.overlayName,
+                  DamageOverlay.overlayName,
                 ],
               ),
             ),
