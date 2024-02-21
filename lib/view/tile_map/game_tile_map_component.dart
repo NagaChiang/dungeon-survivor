@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../game/game_view_model.dart';
-import '../vfx/square_effet_component.dart';
+import '../vfx/square_effect_component.dart';
 import 'game_tile_component.dart';
 import 'tile_map_component.dart';
 
