@@ -113,6 +113,7 @@ class GameState with _$GameState {
     int minPlayerDistance = 8,
     int maxPlayerDistance = 12,
     int maxTileCount = 100,
+    int maxTryCount = 10,
   }) {
     final random = Random();
     const uuid = Uuid();
@@ -128,18 +129,23 @@ class GameState with _$GameState {
         break;
       }
 
-      final distanceX = random.nextIntRange(
-        minPlayerDistance,
-        maxPlayerDistance,
-      );
+      int dx;
+      int dy;
+      bool isValid = false;
+      int tryCount = 0;
+      do {
+        dx = random.nextIntRange(0, maxPlayerDistance);
+        dy = random.nextIntRange(0, maxPlayerDistance);
+        isValid = dx >= minPlayerDistance || dy >= minPlayerDistance;
+        tryCount += 1;
+      } while (!isValid && tryCount < maxTryCount);
 
-      final distanceY = random.nextIntRange(
-        minPlayerDistance,
-        maxPlayerDistance,
-      );
+      if (!isValid) {
+        continue;
+      }
 
-      final x = playerTile.x + (distanceX * random.nextSign());
-      final y = playerTile.y + (distanceY * random.nextSign());
+      final x = playerTile.x + (dx * random.nextSign());
+      final y = playerTile.y + (dy * random.nextSign());
       if (newGameState.isBlockingAt(x, y)) {
         continue;
       }
