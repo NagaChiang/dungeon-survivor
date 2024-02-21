@@ -17,12 +17,26 @@ class HudView extends StatelessWidget {
         final maxHealth = context.select((HudViewModel vm) => vm.maxHealth);
         final killCount = context.select((HudViewModel vm) => vm.killCount);
 
-        return HudLayout(
-          health: health,
-          maxHealth: maxHealth,
-          killCount: killCount,
-          onInputDirection: vm.onInputDirection,
-        );
+        return LayoutBuilder(builder: (context, constraints) {
+          final isLandscape = constraints.maxWidth > constraints.maxHeight;
+          final child = HudLayout(
+            health: health,
+            maxHealth: maxHealth,
+            killCount: killCount,
+            onInputDirection: vm.onInputDirection,
+          );
+
+          if (isLandscape) {
+            return Center(
+              child: AspectRatio(
+                aspectRatio: 9.0 / 16.0,
+                child: child,
+              ),
+            );
+          }
+
+          return child;
+        });
       },
     );
   }
