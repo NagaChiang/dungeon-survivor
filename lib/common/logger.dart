@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as log;
 
@@ -26,11 +24,6 @@ class Logger {
     var logLevel = log.Level.trace;
     if (kReleaseMode) {
       logLevel = log.Level.info;
-    }
-
-    bool isTestMode = Platform.environment.containsKey('FLUTTER_TEST');
-    if (isTestMode) {
-      logLevel = log.Level.off;
     }
 
     _logger = log.Logger(
