@@ -30,6 +30,12 @@ class GameRepository {
       )
       .distinct();
 
+  late final killCountStream = gameStateStream
+      .map(
+        (gameState) => gameState.killCount,
+      )
+      .distinct();
+
   GameState? get gameState => _gameStateSubject.valueOrNull;
 
   void updateGameState(GameState gameState) {

@@ -15,10 +15,12 @@ class HudView extends StatelessWidget {
         final vm = context.read<HudViewModel>();
         final health = context.select((HudViewModel vm) => vm.health);
         final maxHealth = context.select((HudViewModel vm) => vm.maxHealth);
+        final killCount = context.select((HudViewModel vm) => vm.killCount);
 
         return HudLayout(
           health: health,
           maxHealth: maxHealth,
+          killCount: killCount,
           onInputDirection: vm.onInputDirection,
         );
       },

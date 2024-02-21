@@ -8,6 +8,7 @@ import '../../service/game/game_service.dart';
 class HudViewModel extends ChangeNotifier {
   HudViewModel(this._gameService) {
     _subscribeHealth();
+    _subscribeKillCount();
   }
 
   final GameService _gameService;
@@ -17,6 +18,9 @@ class HudViewModel extends ChangeNotifier {
 
   var _maxHealth = 0;
   int get maxHealth => _maxHealth;
+
+  var _killCount = 0;
+  int get killCount => _killCount;
 
   final _sub = CompositeSubscription();
 
@@ -35,6 +39,13 @@ class HudViewModel extends ChangeNotifier {
       _health = tile.health;
       _maxHealth = tile.maxHealth;
 
+      notifyListeners();
+    }).addTo(_sub);
+  }
+
+  void _subscribeKillCount() {
+    _gameService.killCountStream.listen((killCount) {
+      _killCount = killCount;
       notifyListeners();
     }).addTo(_sub);
   }

@@ -21,6 +21,7 @@ class GameState with _$GameState {
 
   const factory GameState({
     required int turnCount,
+    required int killCount,
     required String actionTileId,
     required TileMap tileMap,
   }) = _GameState;

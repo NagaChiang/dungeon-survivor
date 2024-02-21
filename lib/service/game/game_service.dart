@@ -24,6 +24,7 @@ class GameService {
   Stream<TileMap> get tileMapStream => _gameRepo.tileMapStream;
   Stream<PlayerTile> get playerTileStream => _gameRepo.playerTileStream;
   Stream<String> get playerTileIdStream => _gameRepo.playerTileIdStream;
+  Stream<int> get killCountStream => _gameRepo.killCountStream;
 
   final _attackEventSubject = BehaviorSubject<AttackEvent>();
   late final attackEventStream = _attackEventSubject.stream;
@@ -156,17 +157,27 @@ class GameService {
 
     _attackEventSubject.add(attackEvent);
 
+    var deadEnemyCount = 0;
     for (final (x, y) in targetCoords) {
       final tiles = newGameState.getTilesAt(x, y);
       for (final tile in tiles) {
         final DamageEvent? damageEvent;
         (newGameState, damageEvent) = newGameState.attackTile(playerTile, tile);
 
+        final newEnemy = newGameState.tileMap.findTile(tile.id) as EnemyTile?;
+        if (newEnemy != null && newEnemy.health <= 0) {
+          deadEnemyCount++;
+        }
+
         if (damageEvent != null) {
           _damageEventSubject.add(damageEvent);
         }
       }
     }
+
+    newGameState = newGameState.copyWith(
+      killCount: newGameState.killCount + deadEnemyCount,
+    );
 
     _gameRepo.updateGameState(newGameState);
 
@@ -274,6 +285,7 @@ class GameService {
 
     final gameState = GameState(
       turnCount: 0,
+      killCount: 0,
       actionTileId: player.id,
       tileMap: tileMap,
     );
