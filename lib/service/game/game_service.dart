@@ -198,8 +198,10 @@ class GameService {
       return;
     }
 
-    final direction = newGameState.getValidDirectionToPlayer(actionTile);
-    newGameState = newGameState.moveTile(actionTile, direction);
+    if (_canMove(actionTile)) {
+      final direction = newGameState.getValidDirectionToPlayer(actionTile);
+      newGameState = newGameState.moveTile(actionTile, direction);
+    }
 
     if (newGameState.isCloseToPlayer(actionTile)) {
       final DamageEvent? damageEvent;
@@ -215,11 +217,6 @@ class GameService {
         _attackEventSubject.add(attackEvent);
         _damageEventSubject.add(damageEvent);
       }
-    }
-
-    if (!_canMove(actionTile)) {
-      _endAction();
-      return;
     }
 
     _gameRepo.updateGameState(newGameState);
